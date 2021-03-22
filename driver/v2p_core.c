@@ -1,5 +1,4 @@
-#include "v2p_ca9_system.h"
-#include "core_ca.h"
+#include "v2p_core.h"
 
 typedef struct
 {

@@ -62,6 +62,8 @@
 #define V2P_CA9_MP_DDR2_HIGHT_BASE          (0x80000000UL) /*!<  */
 #define V2P_CA9_MP_EXT_HSB_AXI_BASE         (0xE0000000UL) /*!< External HSB AXI */
 
+#define QEMU_VIRIO_MMIO_BASE                (0x10013000UL) /*!<  */
+
 #define GIC_DISTRIBUTOR_BASE                V2P_CA9_MP_GIC_DISTRIBUTOR_BASE
 #define GIC_INTERFACE_BASE                  V2P_CA9_MP_GIC_INTERFACE_BASE
 #define TIMER_BASE                          V2P_CA9_MP_PRIVATE_TIMER
