@@ -34,7 +34,10 @@ int main()
             {
                 debug_logdebug(LOG_SYS_INFO,"this core MPIDR 0x%x\n",mpid);
                 for(int i=0;i<1000;i++) delay(100000);
-                smp_start_flag = mpid+1;
+                if(mpid+1 != 4)
+                    smp_start_flag = mpid+1;
+                else
+                    smp_start_flag = 0;
                 asm volatile("sev");
                 break;
             }
@@ -47,6 +50,15 @@ int main()
 
     for(;;)
     {
+        if(smp_start_flag == mpid)
+        {
+            debug_logdebug(LOG_SYS_INFO,"this core 0x%x\n",mpid);
+            for(int i=0;i<1000;i++) delay(100000);
+            if(mpid+1 != 4)
+                smp_start_flag = mpid+1;
+            else
+                smp_start_flag = 0;
+        }
     }
 }
 
