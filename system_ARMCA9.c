@@ -65,8 +65,8 @@ void SystemInit (void)
     //MMU_Enable();
 
     // Enable Caches
-    L1C_EnableCaches();
-    L1C_EnableBTAC();
+    //L1C_EnableCaches();
+    //L1C_EnableBTAC();
 
 #if (__L2C_PRESENT == 1) 
     // Enable GIC

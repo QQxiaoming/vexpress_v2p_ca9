@@ -62,7 +62,6 @@ OBJ_DIR = $(BUILD_DIR)/obj
 C_SOURCES =  \
         ${wildcard $(TOP_DIR)/cmsis/source/*.c} \
         ${wildcard $(TOP_DIR)/debug_log/*.c} \
-        ${wildcard $(TOP_DIR)/verify_common/print/*.c} \
         ${wildcard $(TOP_DIR)/driver/*.c} \
         ${wildcard $(TOP_DIR)/*.c}
 
@@ -145,7 +144,7 @@ $(OBJ_DIR)/%.o: %.s Makefile | $(OBJ_DIR)
 	@echo AS $(notdir $<)
 	@$(AS) -c $(subst $(TOP_DIR), ., $(CFLAGS)) $(subst $(TOP_DIR), ., $<) -o $@
 
-$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) Makefile
+$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) $(LD_FILE) Makefile
 	@echo LD $(notdir $@)
 	@$(CC) $(OBJECTS) $(subst $(TOP_DIR), ., $(LDFLAGS)) -o $@
 

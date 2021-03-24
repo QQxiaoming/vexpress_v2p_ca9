@@ -40,13 +40,6 @@ _program_start:
         // Mask interrupts
         cpsid   if
 
-//        // Put any cores other than 0 to sleep
-//        mrc     p15, 0, R0, c0, c0, 5   // Read MPIDR
-//        ands    r0, r0, #3
-//gotosleep:
-//        wfine
-//        bne     gotosleep
-
         // Reset SCTLR Settings
         mrc     p15, 0, r0, c1, c0, 0   // Read CP15 System Control register
         bic     r0, r0, #(0x1 << 12)    // Clear I bit 12 to disable I Cache
@@ -66,6 +59,19 @@ _program_start:
         ldr     r0, =_exception_vectors
         mcr     p15, 0, r0, c12, c0, 0
 
+        // Put any cores other than 0 to sleep
+        mrc     p15, 0, r0, c0, c0, 5   // Read MPIDR
+        ubfx	r0, r0, #0, #12
+        cmp	r0, #0
+        beq     core0_start
+        cmp	r0, #1
+        beq     core1_start
+        cmp	r0, #2
+        beq     core2_start
+        cmp	r0, #3
+        beq     core3_start
+
+core0_start:
         // Set up stack for each exceptional mode
         mrs     r0, cpsr                // Original PSR value
 
@@ -73,28 +79,28 @@ _program_start:
         bic     r0, r0, #MODE_MSK       // Clear the mode bits
         orr     r0, r0, #SVC_MODE       // Set SVC mode bits
         msr     cpsr_c, r0              // Change the mode
-        ldr     r1, =SVC_STACK          // End of SVC_STACK
+        ldr     r1, =SVC_STACK_CORE0    // End of SVC_STACK
         bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
         // Set up the interrupt stack pointer.
         bic     r0, r0, #MODE_MSK       // Clear the mode bits
         orr     r0, r0, #IRQ_MODE       // Set IRQ mode bits
         msr     cpsr_c, r0              // Change the mode
-        ldr     r1, =IRQ_STACK          // End of IRQ_STACK
+        ldr     r1, =IRQ_STACK_CORE0    // End of IRQ_STACK
         bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
         // Set up the fast interrupt stack pointer.
         bic     r0, r0, #MODE_MSK       // Clear the mode bits
         orr     r0, r0, #FIQ_MODE       // Set FIR mode bits
         msr     cpsr_c, r0              // Change the mode
-        ldr     r1, =FIQ_STACK          // End of FIQ_STACK
+        ldr     r1, =FIQ_STACK_CORE0    // End of FIQ_STACK
         bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
         // Set up the normal stack pointer.
         bic     r0 ,r0, #MODE_MSK       // Clear the mode bits
         orr     r0 ,r0, #SYS_MODE       // Set System mode bits
         msr     cpsr_c, r0              // Change the mode
-        ldr     r1, =CSTACK             // End of CSTACK
+        ldr     r1, =CSTACK_CORE0       // End of CSTACK
         bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
         bl      SMPLowLiveInit
@@ -130,6 +136,117 @@ LoopFillZerobss:
         bl      SystemInit
         //mov     r0, #0
         //bl      __libc_init_arry
+        cpsie   if
+	bl      main
+        bx      r0  //JUMP
+
+core1_start:
+        // Set up stack for each exceptional mode
+        mrs     r0, cpsr                // Original PSR value
+
+        // Set up the svc stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #SVC_MODE       // Set SVC mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =SVC_STACK_CORE1    // End of SVC_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the interrupt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #IRQ_MODE       // Set IRQ mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =IRQ_STACK_CORE1    // End of IRQ_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the fast interrupt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #FIQ_MODE       // Set FIR mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =FIQ_STACK_CORE1    // End of FIQ_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the normal stack pointer.
+        bic     r0 ,r0, #MODE_MSK       // Clear the mode bits
+        orr     r0 ,r0, #SYS_MODE       // Set System mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =CSTACK_CORE1       // End of CSTACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        bl      SMPLowLiveInit
+        cpsie   if
+	bl      main
+        bx      r0  //JUMP
+
+core2_start:
+        // Set up stack for each exceptional mode
+        mrs     r0, cpsr                // Original PSR value
+
+        // Set up the svc stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #SVC_MODE       // Set SVC mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =SVC_STACK_CORE2    // End of SVC_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the interrupt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #IRQ_MODE       // Set IRQ mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =IRQ_STACK_CORE2    // End of IRQ_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the fast interrupt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #FIQ_MODE       // Set FIR mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =FIQ_STACK_CORE2    // End of FIQ_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the normal stack pointer.
+        bic     r0 ,r0, #MODE_MSK       // Clear the mode bits
+        orr     r0 ,r0, #SYS_MODE       // Set System mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =CSTACK_CORE2       // End of CSTACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        bl      SMPLowLiveInit
+        cpsie   if
+	bl      main
+        bx      r0  //JUMP
+
+core3_start:
+        // Set up stack for each exceptional mode
+        mrs     r0, cpsr                // Original PSR value
+
+        // Set up the svc stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #SVC_MODE       // Set SVC mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =SVC_STACK_CORE3    // End of SVC_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the interrupt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #IRQ_MODE       // Set IRQ mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =IRQ_STACK_CORE3    // End of IRQ_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the fast interrupt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #FIQ_MODE       // Set FIR mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =FIQ_STACK_CORE3    // End of FIQ_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        // Set up the normal stack pointer.
+        bic     r0 ,r0, #MODE_MSK       // Clear the mode bits
+        orr     r0 ,r0, #SYS_MODE       // Set System mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =CSTACK_CORE3       // End of CSTACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
+        bl      SMPLowLiveInit
         cpsie   if
 	bl      main
         bx      r0  //JUMP

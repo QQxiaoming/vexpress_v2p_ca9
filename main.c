@@ -6,6 +6,8 @@
 #include <math.h>
 #include <string.h>
 
+unsigned int smp_start_flag = 0;
+
 static inline void delay(uint32_t loops)
 {
 	__asm__ volatile ("1:\n"
@@ -15,9 +17,34 @@ static inline void delay(uint32_t loops)
 
 int main()
 {
-    uint32_t mpidr = __get_MPIDR();
-    pl01x_init(V2P_CA9_MP_UART0_BASE,115200);
-    debug_logdebug(LOG_SYS_INFO,"current MPIDR 0x%x\n",mpidr&0xFFF);
+    uint32_t mpid = __get_MPIDR()&0xFFF;
+    if(mpid == smp_start_flag)
+    {
+        pl01x_init(V2P_CA9_MP_UART0_BASE,115200);
+        debug_logdebug(LOG_SYS_INFO,"this core MPIDR 0x%x\n",mpid);
+        for(int i=0;i<1000;i++) delay(100000);
+        smp_start_flag = mpid+1;
+        asm volatile("sev");
+    }
+    else
+    {
+        while (1)
+        {
+            if(smp_start_flag == mpid)
+            {
+                debug_logdebug(LOG_SYS_INFO,"this core MPIDR 0x%x\n",mpid);
+                for(int i=0;i<1000;i++) delay(100000);
+                smp_start_flag = mpid+1;
+                asm volatile("sev");
+                break;
+            }
+            else
+            {
+                asm volatile("wfe");
+            }
+        }
+    }
+
     for(;;)
     {
     }
@@ -32,9 +59,6 @@ void SMPLowLiveInit()
     }
     else
     {
-        while(1)
-        {
-		    asm("wfe\n");
-        }
+        asm volatile("wfe");
     }
 }
