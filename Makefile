@@ -25,7 +25,7 @@ GCC_DIR  = /cygdrive/c/Users/pc/Desktop/v2p_ca9/gcc-arm-10.2-2020.11-mingw-w64-i
 QEMU_DIR = /cygdrive/c/Program\ Files/qemu
 else
 GCC_DIR  = /media/xiaoming/xiaoming_data/data/qiaoqm/linux_kernel/ci_linux/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
-QEMU_DIR = /usr/bin
+QEMU_DIR = /usr/local/bin
 endif
 
 #######################################

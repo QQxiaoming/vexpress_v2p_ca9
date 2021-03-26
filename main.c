@@ -52,7 +52,7 @@ int main()
     {
         if(smp_start_flag == mpid)
         {
-            debug_logdebug(LOG_SYS_INFO,"this core 0x%x\n",mpid);
+            debug_logdebug(LOG_SYS_INFO,"this core %x\n",mpid);
             for(int i=0;i<1000;i++) delay(100000);
             if(mpid+1 != 4)
                 smp_start_flag = mpid+1;

@@ -81,7 +81,7 @@
 
 typedef enum IRQn
 {
-/******  SGI Interrupts Numbers                 ****************************************/
+/******  SGI Interrupts Numbers ********************************************************/
   SGI0_IRQn            =  0,        /*!< Software Generated Interrupt 0 */
   SGI1_IRQn            =  1,        /*!< Software Generated Interrupt 1 */
   SGI2_IRQn            =  2,        /*!< Software Generated Interrupt 2 */
@@ -105,22 +105,40 @@ typedef enum IRQn
   PrivWatchdog_IRQn    = 30,        /*!< Private Watchdog Interrupt                    */
 
 /******  Platform Exceptions Numbers ***************************************************/
-  Watchdog_IRQn        = 32,        /*!< SP805 Interrupt        */
-  Timer0_IRQn          = 34,        /*!< SP804 Interrupt        */
-  Timer1_IRQn          = 35,        /*!< SP804 Interrupt        */
-  RTClock_IRQn         = 36,        /*!< PL031 Interrupt        */
-  UART0_IRQn           = 37,        /*!< PL011 Interrupt        */
-  UART1_IRQn           = 38,        /*!< PL011 Interrupt        */
-  UART2_IRQn           = 39,        /*!< PL011 Interrupt        */
-  UART3_IRQn           = 40,        /*!< PL011 Interrupt        */
-  MCI0_IRQn            = 41,        /*!< PL180 Interrupt (1st)  */
-  MCI1_IRQn            = 42,        /*!< PL180 Interrupt (2nd)  */
-  AACI_IRQn            = 43,        /*!< PL041 Interrupt        */
-  Keyboard_IRQn        = 44,        /*!< PL050 Interrupt        */
-  Mouse_IRQn           = 45,        /*!< PL050 Interrupt        */
-  CLCD_IRQn            = 46,        /*!< PL111 Interrupt        */
-  Ethernet_IRQn        = 47,        /*!< SMSC_91C111 Interrupt  */
-  VFS2_IRQn            = 73,        /*!< VFS2 Interrupt         */
+  Watchdog_IRQn        = 32+0,      /*!< SP805 Interrupt        */
+  SoftWare_IRQn        = 32+1,      /*!<                        */
+  Timer0_1_IRQn        = 32+2,      /*!< SP804 Interrupt        */
+  Timer2_3_IRQn        = 32+3,      /*!< SP804 Interrupt        */
+  RTC_IRQn             = 32+4,      /*!< PL031 Interrupt        */
+  UART0_IRQn           = 32+5,      /*!< PL011 Interrupt        */
+  UART1_IRQn           = 32+6,      /*!< PL011 Interrupt        */
+  UART2_IRQn           = 32+7,      /*!< PL011 Interrupt        */
+  UART3_IRQn           = 32+8,      /*!< PL011 Interrupt        */
+  MCI0_IRQn            = 32+9,      /*!< PL180 Interrupt (1st)  */
+  MCI1_IRQn            = 32+10,     /*!< PL180 Interrupt (2nd)  */
+  AACI_IRQn            = 32+11,     /*!< PL041 Interrupt        */
+  KMI0_IRQn            = 32+12,     /*!<                        */
+  KMI1_IRQn            = 32+13,     /*!<                        */
+  CLCD_IRQn            = 32+14,     /*!< PL111 Interrupt        */
+  Ethernet_IRQn        = 32+15,     /*!< SMSC_91C111 Interrupt  */
+  USB_IRQn             = 32+16,     /*!<                        */
+  PCIE_IRQn            = 32+17,     /*!<                        */
+
+  L2CC_IRQn            = 32+43,
+  CLCDC_IRQn           = 32+44,
+  SMC0_IRQn            = 32+45,
+  SMC1_IRQn            = 32+46,
+  NMC_IRQn             = 32+47,
+  SYS_Timer0_IRQn      = 32+48,
+  SYS_Timer1_IRQn      = 32+49,
+
+  SYS_Watchdog_IRQn    = 32+51,
+  SYS_UART_IRQn        = 32+52,
+
+  PMU0_IRQn            = 32+60,
+  PMU1_IRQn            = 32+61,
+  PMU2_IRQn            = 32+62,
+  PMU3_IRQn            = 32+63,
 } IRQn_Type;
 
 #define INT32_T_MAX (0x7fffffff)
