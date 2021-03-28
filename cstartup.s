@@ -134,8 +134,8 @@ LoopFillZerobss:
 	bcc	FillZerobss
 
         bl      SystemInit
-        //mov     r0, #0
-        //bl      __libc_init_arry
+	//ldr	r0, = main
+        //bl      __libc_start_main
         cpsie   if
 	bl      main
         bx      r0  //JUMP

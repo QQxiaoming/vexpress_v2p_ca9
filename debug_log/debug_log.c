@@ -41,12 +41,12 @@ int _puts(char *str)
 static char printk_string[UART_LOG_BUFF_SIZE] = {0};
 int _printf(char* format,...)
 {
-    myva_list args;
+    va_list args;
     int plen;
-    myva_start(args, format);
+    va_start(args, format);
     plen = vsnprintf(printk_string, sizeof(printk_string)/sizeof(char) - 1, format, args);
     _puts(printk_string);
-    myva_end(args);
+    va_end(args);
     return plen;
 }
 #else
@@ -463,7 +463,6 @@ int _printf(char *fmt, ...)
 }
 #endif
 #else
-
 int _printf(char *format, ...)
 {
     return 0;
