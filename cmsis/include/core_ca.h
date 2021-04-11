@@ -2489,19 +2489,20 @@ __STATIC_INLINE int MMU_GetPageDescriptor(uint32_t *descriptor, uint32_t *descri
 /** \brief  Create a 1MB Section
 
   \param [in]               ttb  Translation table base address
-  \param [in]      base_address  Section base address
+  \param [in]     vbase_address  virtual address
+  \param [in]     pbase_address  Section base address
   \param [in]             count  Number of sections to create
   \param [in]     descriptor_l1  L1 descriptor (region attributes)
 
 */
-__STATIC_INLINE void MMU_TTSection(uint32_t *ttb, uint32_t base_address, uint32_t count, uint32_t descriptor_l1)
+__STATIC_INLINE void MMU_TTSection(uint32_t *ttb, uint32_t vbase_address, uint32_t pbase_address, uint32_t count, uint32_t descriptor_l1)
 {
   uint32_t offset;
   uint32_t entry;
   uint32_t i;
 
-  offset = base_address >> 20;
-  entry  = (base_address & 0xFFF00000) | descriptor_l1;
+  offset = vbase_address >> 20;
+  entry  = (pbase_address & 0xFFF00000) | descriptor_l1;
 
   //4 bytes aligned
   ttb = ttb + offset;
@@ -2517,21 +2518,22 @@ __STATIC_INLINE void MMU_TTSection(uint32_t *ttb, uint32_t base_address, uint32_
 /** \brief  Create a 4k page entry
 
   \param [in]               ttb  L1 table base address
-  \param [in]      base_address  4k base address
+  \param [in]     vbase_address  virtual address
+  \param [in]     pbase_address  4k base address
   \param [in]             count  Number of 4k pages to create
   \param [in]     descriptor_l1  L1 descriptor (region attributes)
   \param [in]            ttb_l2  L2 table base address
   \param [in]     descriptor_l2  L2 descriptor (region attributes)
 
 */
-__STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t base_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2, uint32_t descriptor_l2 )
+__STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t vbase_address, uint32_t pbase_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2, uint32_t descriptor_l2 )
 {
 
   uint32_t offset, offset2;
   uint32_t entry, entry2;
   uint32_t i;
 
-  offset = base_address >> 20;
+  offset = vbase_address >> 20;
   entry  = ((int)ttb_l2 & 0xFFFFFC00) | descriptor_l1;
 
   //4 bytes aligned
@@ -2539,9 +2541,9 @@ __STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t base_address, uint32_t
   //create l1_entry
   *ttb = entry;
 
-  offset2 = (base_address & 0xff000) >> 12;
+  offset2 = (vbase_address & 0xff000) >> 12;
   ttb_l2 += offset2;
-  entry2 = (base_address & 0xFFFFF000) | descriptor_l2;
+  entry2 = (pbase_address & 0xFFFFF000) | descriptor_l2;
   for (i = 0; i < count; i++ )
   {
     //4 bytes aligned
@@ -2553,21 +2555,22 @@ __STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t base_address, uint32_t
 /** \brief  Create a 64k page entry
 
   \param [in]               ttb  L1 table base address
-  \param [in]      base_address  64k base address
+  \param [in]     vbase_address  virtual address
+  \param [in]     pbase_address  64k base address
   \param [in]             count  Number of 64k pages to create
   \param [in]     descriptor_l1  L1 descriptor (region attributes)
   \param [in]            ttb_l2  L2 table base address
   \param [in]     descriptor_l2  L2 descriptor (region attributes)
 
 */
-__STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t base_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2, uint32_t descriptor_l2 )
+__STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t vbase_address,uint32_t pbase_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2, uint32_t descriptor_l2 )
 {
   uint32_t offset, offset2;
   uint32_t entry, entry2;
   uint32_t i,j;
 
 
-  offset = base_address >> 20;
+  offset = vbase_address >> 20;
   entry  = ((int)ttb_l2 & 0xFFFFFC00) | descriptor_l1;
 
   //4 bytes aligned
@@ -2575,39 +2578,9 @@ __STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t base_address, uint32_
   //create l1_entry
   *ttb = entry;
 
-  offset2 = (base_address & 0xff000) >> 12;
+  offset2 = (vbase_address & 0xff000) >> 12;
   ttb_l2 += offset2;
-  entry2 = (base_address & 0xFFFF0000) | descriptor_l2;
-  for (i = 0; i < count; i++ )
-  {
-    //create 16 entries
-    for (j = 0; j < 16; j++)
-    {
-      //4 bytes aligned
-      *ttb_l2++ = entry2;
-    }
-    entry2 += OFFSET_64K;
-  }
-}
-
-__STATIC_INLINE void MMU_TTPage64k_qqm(uint32_t *ttb, uint32_t base_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2, uint32_t descriptor_l2 )
-{
-  uint32_t offset, offset2;
-  uint32_t entry, entry2;
-  uint32_t i,j;
-
-
-  offset = base_address >> 20;
-  entry  = ((int)ttb_l2 & 0xFFFFFC00) | descriptor_l1;
-
-  //4 bytes aligned
-  ttb += offset;
-  //create l1_entry
-  *ttb = entry;
-
-  offset2 = (base_address & 0xff000) >> 12;
-  ttb_l2 += offset2;
-  entry2 = ((base_address & 0xEFFF0000)+0x20000) | descriptor_l2;
+  entry2 = (pbase_address & 0xFFFF0000) | descriptor_l2;
   for (i = 0; i < count; i++ )
   {
     //create 16 entries
