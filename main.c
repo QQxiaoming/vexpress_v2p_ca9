@@ -18,16 +18,33 @@ static inline void delay(uint32_t loops)
 int main()
 {
     uint32_t mpid = __get_MPIDR()&0xFFF;
-    if(mpid == smp_start_flag)
+    pl01x_init(V2P_CA9_MP_UART0_BASE,115200);
+    debug_logdebug(LOG_SYS_INFO,"this core MPIDR 0x%x\n",mpid);
+    for(int i=0;i<1000;i++) delay(100000);
+    smp_start_flag = mpid+1;
+    L1C_CleanDCacheAll();
+    asm volatile("sev");
+    for(int i=0;i<5000;i++) delay(100000);
+
+    int time = 0;
+    for(;;)
     {
-        pl01x_init(V2P_CA9_MP_UART0_BASE,115200);
-        debug_logdebug(LOG_SYS_INFO,"this core MPIDR 0x%x\n",mpid);
-        for(int i=0;i<1000;i++) delay(100000);
-        smp_start_flag = mpid+1;
-        asm volatile("sev");
+        debug_logdebug(LOG_SYS_INFO,"debug 0x%x\n",time++);
+        for(int i=0;i<4000;i++) delay(100000);
+    }
+}
+
+void SMPLowLiveInit(void)
+{
+    uint32_t mpid = __get_MPIDR()&0xFFF;
+    if(mpid == 0x0)
+    {
+        return;
     }
     else
     {
+        asm volatile("wfe");
+
         while (1)
         {
             if(smp_start_flag == mpid)
@@ -46,31 +63,5 @@ int main()
                 asm volatile("wfe");
             }
         }
-    }
-
-    for(;;)
-    {
-        if(smp_start_flag == mpid)
-        {
-            debug_logdebug(LOG_SYS_INFO,"this core %x\n",mpid);
-            for(int i=0;i<1000;i++) delay(100000);
-            if(mpid+1 != 4)
-                smp_start_flag = mpid+1;
-            else
-                smp_start_flag = 0;
-        }
-    }
-}
-
-void SMPLowLiveInit()
-{
-    uint32_t mpid = __get_MPIDR()&0xFFF;
-    if(mpid == 0x0)
-    {
-        return;
-    }
-    else
-    {
-        asm volatile("wfe");
     }
 }

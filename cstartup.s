@@ -103,8 +103,6 @@ core0_start:
         ldr     r1, =CSTACK_CORE0       // End of CSTACK
         bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
-        bl      SMPLowLiveInit
-
 /* Copy the data segment initializers from flash to SRAM */
         mov	r1, #0
         bl	LoopCopyDataInit
@@ -172,9 +170,8 @@ core1_start:
         ldr     r1, =CSTACK_CORE1       // End of CSTACK
         bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
-        bl      SMPLowLiveInit
         cpsie   if
-	bl      main
+	bl      SMPLowLiveInit
         bx      r0  //JUMP
 
 core2_start:
@@ -209,9 +206,8 @@ core2_start:
         ldr     r1, =CSTACK_CORE2       // End of CSTACK
         bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
-        bl      SMPLowLiveInit
         cpsie   if
-	bl      main
+	bl      SMPLowLiveInit
         bx      r0  //JUMP
 
 core3_start:
@@ -246,9 +242,8 @@ core3_start:
         ldr     r1, =CSTACK_CORE3       // End of CSTACK
         bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
-        bl      SMPLowLiveInit
         cpsie   if
-	bl      main
+	bl      SMPLowLiveInit
         bx      r0  //JUMP
 
         .section .text.fiq_handler
