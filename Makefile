@@ -63,10 +63,14 @@ C_SOURCES =  \
         ${wildcard $(TOP_DIR)/cmsis/source/*.c} \
         ${wildcard $(TOP_DIR)/debug_log/*.c} \
         ${wildcard $(TOP_DIR)/driver/*.c} \
+        ${wildcard $(TOP_DIR)/freertos/*.c} \
+        ${wildcard $(TOP_DIR)/freertos/portable/GCC/ARM_CA9/*.c} \
+        ${wildcard $(TOP_DIR)/freertos/portable/MemMang/heap_4.c} \
         ${wildcard $(TOP_DIR)/*.c}
 
 # ASM sources
 ASM_SOURCES =  \
+        ${wildcard $(TOP_DIR)/freertos/portable/GCC/ARM_CA9/*.s} \
         ${wildcard $(TOP_DIR)/cstartup.s}
 
 
@@ -93,6 +97,8 @@ C_INCLUDES = \
         -I $(TOP_DIR)/debug_log  \
         -I $(TOP_DIR)/driver  \
         -I $(TOP_DIR)/cmsis/include \
+        -I $(TOP_DIR)/freertos/include \
+        -I $(TOP_DIR)/freertos/portable/GCC/ARM_CA9 \
         -I $(TOP_DIR)
 
 
