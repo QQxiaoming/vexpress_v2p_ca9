@@ -19,14 +19,32 @@ static inline void delay(uint32_t loops)
 		"bne 1b" : "=r" (loops) : "0" (loops));
 }
 
-static void vTaskCreate (void *p_arg)
+void task1(void *p_arg)
 { 
     int time = 0;
     for(;;)
     {
-        debug_logdebug(LOG_SYS_INFO,"debug 0x%x\n",time++);
+        debug_logdebug(LOG_SYS_INFO,"task1 0x%x\n",time++);
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
+}
+
+void task2(void *p_arg)
+{ 
+    int time = 0;
+    for(;;)
+    {
+        debug_logdebug(LOG_SYS_INFO,"task2 0x%x\n",time++);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+static void vTaskCreate (void *p_arg)
+{ 
+    xTaskCreate(task1,"task1",256,NULL,4,NULL);
+    xTaskCreate(task2,"task2",256,NULL,4,NULL);
+
+    vTaskDelete(NULL);
 }
 
 int main()
@@ -86,6 +104,7 @@ void vConfigureTickInterrupt(void)
     IRQ_SetMode(PrivTimer_IRQn, mode|IRQ_MODE_TRIG_EDGE_RISING);
     IRQ_Enable(PrivTimer_IRQn);
     PTIM_SetCurrentValue(0);
+    //TODO:待确认时钟是否配置正确
     PTIM_SetLoadValue(configPERIPHERAL_CLOCK_HZ/configTICK_RATE_HZ);
     PTIM_SetControl((2<<8)|(1<<2)|(1<<1)|(1<<0));
 }
