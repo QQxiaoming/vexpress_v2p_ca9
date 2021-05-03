@@ -73,7 +73,7 @@
 #define configUSE_PORT_OPTIMISED_TASK_SELECTION	1
 #define configUSE_TICKLESS_IDLE					0
 #define configTICK_RATE_HZ						( ( TickType_t ) 1000 )
-#define configPERIPHERAL_CLOCK_HZ  				( 33333000UL )
+#define configPERIPHERAL_CLOCK_HZ  				( 33000000UL )
 #define configUSE_PREEMPTION					1
 #define configUSE_IDLE_HOOK						0
 #define configUSE_TICK_HOOK						0
@@ -146,7 +146,7 @@ command interpreter running. */
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
 void vAssertCalled( const char * pcFile, unsigned long ulLine );
-//#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
+#define configASSERT( x ) if( ( x ) == 0 ) { taskDISABLE_INTERRUPTS(); for( ;; ); }
 
 /* If configTASK_RETURN_ADDRESS is not defined then a task that attempts to
 return from its implementing function will end up in a "task exit error"

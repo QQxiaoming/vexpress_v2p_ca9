@@ -1872,7 +1872,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = WB_WA; \
                                    region.outer_norm_t = WB_WA; \
                                    region.mem_t = NORMAL; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = EXECUTE; \
                                    region.priv_t = RW; \
                                    region.user_t = RW; \
@@ -1887,7 +1887,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = NON_CACHEABLE; \
                                    region.outer_norm_t = NON_CACHEABLE; \
                                    region.mem_t = NORMAL; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = EXECUTE; \
                                    region.priv_t = RW; \
                                    region.user_t = RW; \
@@ -1902,7 +1902,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = WB_WA; \
                                    region.outer_norm_t = WB_WA; \
                                    region.mem_t = NORMAL; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = EXECUTE; \
                                    region.priv_t = READ; \
                                    region.user_t = READ; \
@@ -1917,7 +1917,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = WB_WA; \
                                    region.outer_norm_t = WB_WA; \
                                    region.mem_t = NORMAL; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = NON_EXECUTE; \
                                    region.priv_t = READ; \
                                    region.user_t = READ; \
@@ -1932,7 +1932,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = WB_WA; \
                                    region.outer_norm_t = WB_WA; \
                                    region.mem_t = NORMAL; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = EXECUTE; \
                                    region.priv_t = RW; \
                                    region.user_t = RW; \
@@ -1946,7 +1946,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = NON_CACHEABLE; \
                                    region.outer_norm_t = NON_CACHEABLE; \
                                    region.mem_t = STRONGLY_ORDERED; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = NON_EXECUTE; \
                                    region.priv_t = RW; \
                                    region.user_t = RW; \
@@ -1961,7 +1961,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = NON_CACHEABLE; \
                                    region.outer_norm_t = NON_CACHEABLE; \
                                    region.mem_t = STRONGLY_ORDERED; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = NON_EXECUTE; \
                                    region.priv_t = READ; \
                                    region.user_t = READ; \
@@ -1976,7 +1976,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = NON_CACHEABLE; \
                                    region.outer_norm_t = NON_CACHEABLE; \
                                    region.mem_t = STRONGLY_ORDERED; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = NON_EXECUTE; \
                                    region.priv_t = RW; \
                                    region.user_t = RW; \
@@ -1990,7 +1990,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = NON_CACHEABLE; \
                                    region.outer_norm_t = NON_CACHEABLE; \
                                    region.mem_t = SHARED_DEVICE; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = NON_EXECUTE; \
                                    region.priv_t = RW; \
                                    region.user_t = RW; \
@@ -2005,7 +2005,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = NON_CACHEABLE; \
                                    region.outer_norm_t = NON_CACHEABLE; \
                                    region.mem_t = SHARED_DEVICE; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = NON_EXECUTE; \
                                    region.priv_t = RW; \
                                    region.user_t = RW; \
@@ -2020,7 +2020,7 @@ typedef struct RegionStruct {
                                    region.inner_norm_t = WB_WA; \
                                    region.outer_norm_t = WB_WA; \
                                    region.mem_t = NORMAL; \
-                                   region.sec_t = NON_SECURE; \
+                                   region.sec_t = SECURE; \
                                    region.xn_t = EXECUTE; \
                                    region.priv_t = RW; \
                                    region.user_t = RW; \

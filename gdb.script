@@ -1,3 +1,1 @@
 target remote:1234
-
-b FreeRTOS_IRQ_Handler

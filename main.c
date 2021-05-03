@@ -24,11 +24,8 @@ static void vTaskCreate (void *p_arg)
     int time = 0;
     for(;;)
     {
-        //debug_logdebug(LOG_SYS_INFO,"debug 0x%x\n",time++);
-        //vTaskDelay(pdMS_TO_TICKS(1000));
-        debug_logdebug(LOG_SYS_INFO,"IRQ_GetPending 0x%x\n",IRQ_GetPending(PrivTimer_IRQn));
-        debug_logdebug(LOG_SYS_INFO,"PTIM_GetEventFlag 0x%x\n",PTIM_GetEventFlag());
-        for(int i=0;i<5000;i++) delay(10000);
+        debug_logdebug(LOG_SYS_INFO,"debug 0x%x\n",time++);
+        vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
@@ -89,8 +86,8 @@ void vConfigureTickInterrupt(void)
     IRQ_SetMode(PrivTimer_IRQn, mode|IRQ_MODE_TRIG_EDGE_RISING);
     IRQ_Enable(PrivTimer_IRQn);
     PTIM_SetCurrentValue(0);
-    PTIM_SetLoadValue(300000000);
-    PTIM_SetControl((1<<8)|(1<<2)|(1<<1)|(1<<0));
+    PTIM_SetLoadValue(configPERIPHERAL_CLOCK_HZ/configTICK_RATE_HZ);
+    PTIM_SetControl((2<<8)|(1<<2)|(1<<1)|(1<<0));
 }
 
 void vClearTickInterrupt(void) 
@@ -109,7 +106,6 @@ void vApplicationFPUSafeIRQHandler( uint32_t ulICCIAR )
 	/* The ID of the interrupt is obtained by bitwise anding the ICCIAR value
 	with 0x3FF. */
 	ulInterruptID = ulICCIAR & 0x3FFUL;
-    debug_logdebug(LOG_SYS_INFO,"ulInterruptID %d\n",ulInterruptID);
     InterruptHandler = IRQ_GetHandler((IRQn_ID_t)ulInterruptID);
     if(InterruptHandler != NULL)
     {
