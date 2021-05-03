@@ -196,6 +196,10 @@ qemu:
 	@echo start qemu
 	@$(QEMU) -M vexpress-a9 -m 1024m -smp 4 -kernel $(BUILD_DIR)/$(TARGET).elf -nographic
 
+qemu_gdb:
+	@echo start qemu
+	@$(QEMU) -M vexpress-a9 -m 1024m -smp 4 -kernel $(BUILD_DIR)/$(TARGET).elf -nographic -gdb tcp::1234 -S
+
 #######################################
 # dependencies
 #######################################
