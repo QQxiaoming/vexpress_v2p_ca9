@@ -4,7 +4,8 @@
 	.globl reset
         .globl Abort_Handler
 
-
+        .extern FreeRTOS_IRQ_Handler
+        .extern FreeRTOS_SWI_Handler
 
         .section .text.reset
 	.align 4
@@ -13,13 +14,17 @@ reset:
 _exception_vectors:
         b _program_start           
         b Undefined_Handler       
-        b SWI_Handler             
+        //b SWI_Handler    
+        ldr   pc, _swi         
         b Prefetch_Handler        
         b Abort_Handler           
         .word   0                       
-        b IRQ_Handler             
-        b FIQ_Handler             
-
+        //b IRQ_Handler      
+        LDR   PC, _irq       
+        b FIQ_Handler       
+              
+_irq:   .word FreeRTOS_IRQ_Handler
+_swi:   .word FreeRTOS_SWI_Handler
 
         .section .text._program_start
 	.align 4

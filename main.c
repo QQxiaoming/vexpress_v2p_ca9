@@ -2,7 +2,11 @@
 #include "irq_ctrl.h"
 #include "debug_log.h"
 #include "v2p_uart.h"
+#include "v2p_core.h"
 #include "qemu_virio.h"
+#include "FreeRTOS.h"
+#include "task.h"
+#include "semphr.h"
 #include <math.h>
 #include <string.h>
 
@@ -13,6 +17,34 @@ static inline void delay(uint32_t loops)
 	__asm__ volatile ("1:\n"
 		"subs %0, %1, #1\n"
 		"bne 1b" : "=r" (loops) : "0" (loops));
+}
+
+void task1(void *p_arg)
+{ 
+    int time = 0;
+    for(;;)
+    {
+        debug_logdebug(LOG_SYS_INFO,"task1 0x%x\n",time++);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+void task2(void *p_arg)
+{ 
+    int time = 0;
+    for(;;)
+    {
+        debug_logdebug(LOG_SYS_INFO,"task2 0x%x\n",time++);
+        vTaskDelay(pdMS_TO_TICKS(1000));
+    }
+}
+
+static void vTaskCreate (void *p_arg)
+{ 
+    xTaskCreate(task1,"task1",256,NULL,4,NULL);
+    xTaskCreate(task2,"task2",256,NULL,4,NULL);
+
+    vTaskDelete(NULL);
 }
 
 int main()
@@ -26,12 +58,11 @@ int main()
     asm volatile("sev");
     for(int i=0;i<5000;i++) delay(100000);
 
-    int time = 0;
-    for(;;)
-    {
-        debug_logdebug(LOG_SYS_INFO,"debug 0x%x\n",time++);
-        for(int i=0;i<4000;i++) delay(100000);
-    }
+    IRQ_SetPriorityGroupBits(7);
+
+    xTaskCreate(vTaskCreate,"task creat",256,NULL,4,NULL);
+
+    vTaskStartScheduler();
 }
 
 void SMPLowLiveInit(void)
@@ -63,5 +94,40 @@ void SMPLowLiveInit(void)
                 asm volatile("wfe");
             }
         }
+    }
+}
+
+void vConfigureTickInterrupt(void) 
+{
+    IRQ_SetHandler(PrivTimer_IRQn,FreeRTOS_Tick_Handler);
+    uint32_t mode = (~IRQ_MODE_TRIG_Msk)&IRQ_GetMode(PrivTimer_IRQn);
+    IRQ_SetMode(PrivTimer_IRQn, mode|IRQ_MODE_TRIG_EDGE_RISING);
+    IRQ_Enable(PrivTimer_IRQn);
+    PTIM_SetCurrentValue(0);
+    //TODO:待确认时钟是否配置正确
+    PTIM_SetLoadValue(configPERIPHERAL_CLOCK_HZ/configTICK_RATE_HZ);
+    PTIM_SetControl((2<<8)|(1<<2)|(1<<1)|(1<<0));
+}
+
+void vClearTickInterrupt(void) 
+{ 
+    PTIM_ClearEventFlag(); 
+}
+
+void vApplicationFPUSafeIRQHandler( uint32_t ulICCIAR )
+{
+    uint32_t ulInterruptID;
+    IRQHandler_t InterruptHandler = NULL;
+
+	/* Re-enable interrupts. */
+	__asm ( "cpsie i" );
+
+	/* The ID of the interrupt is obtained by bitwise anding the ICCIAR value
+	with 0x3FF. */
+	ulInterruptID = ulICCIAR & 0x3FFUL;
+    InterruptHandler = IRQ_GetHandler((IRQn_ID_t)ulInterruptID);
+    if(InterruptHandler != NULL)
+    {
+        InterruptHandler();
     }
 }
