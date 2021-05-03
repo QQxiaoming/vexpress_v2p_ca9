@@ -4,8 +4,6 @@
 	.globl reset
         .globl Abort_Handler
 
-        .extern FreeRTOS_IRQ_Handler
-        .extern FreeRTOS_SWI_Handler
 
         .section .text.reset
 	.align 4
@@ -14,18 +12,13 @@ reset:
 _exception_vectors:
         b _program_start           
         b Undefined_Handler       
-        //b SWI_Handler    
-        ldr   pc, _swi         
+        b SWI_Handler    
         b Prefetch_Handler        
         b Abort_Handler           
         .word   0                       
-        //b IRQ_Handler      
-        LDR   PC, _irq       
+        b IRQ_Handler      
         b FIQ_Handler       
               
-_irq:   .word FreeRTOS_IRQ_Handler
-_swi:   .word FreeRTOS_SWI_Handler
-
         .section .text._program_start
 	.align 4
 _program_start:
@@ -251,14 +244,38 @@ core3_start:
 	bl      SMPLowLiveInit
         bx      r0  //JUMP
 
-        .section .text.fiq_handler
+        .section .text.handler
+	.align 4
+Undefined_Handler:
+Prefetch_Handler:
+Abort_Handler:
+        b Abort_Handler
+
+        .section .text.handler
+	.align 4
+SWI_Handler:
+        b FreeRTOS_SWI_Handler
+
+        .section .text.handler
+	.align 4
+IRQ_Handler:
+        b FreeRTOS_IRQ_Handler
+
+        .section .text.handler
 	.align 4
 FIQ_Handler:
         b FIQ_Handler
 
-        .section .text.irq_handler
+        .section .text.handler
+        .weak FreeRTOS_SWI_Handler
 	.align 4
-IRQ_Handler:
+FreeRTOS_SWI_Handler:
+        b FreeRTOS_SWI_Handler
+
+        .section .text.handler
+        .weak FreeRTOS_IRQ_Handler
+	.align 4
+FreeRTOS_IRQ_Handler:
         push    {lr}                         /* Save return address+4                                */
         push    {r0-r3, r12}                 /* Push caller save registers                           */
 
@@ -293,13 +310,5 @@ not_jump_handler:
         pop     {r0-r3, r12}
         pop     {lr}
         subs    pc, lr, #4
-
-        .section .text.handler
-	.align 4
-Undefined_Handler:
-SWI_Handler:
-Prefetch_Handler:
-Abort_Handler:
-        b Abort_Handler
 
         .end

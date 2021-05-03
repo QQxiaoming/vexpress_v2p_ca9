@@ -78,9 +78,9 @@
 #define configUSE_IDLE_HOOK						0
 #define configUSE_TICK_HOOK						0
 #define configMAX_PRIORITIES					( 7 )
-#define configMINIMAL_STACK_SIZE				( ( unsigned short ) 250 ) /* Large in case configUSE_TASK_FPU_SUPPORT is 2 in which case all tasks have an FPU context. */
-#define configTOTAL_HEAP_SIZE					( 125 * 1024 )
-#define configMAX_TASK_NAME_LEN					( 10 )
+#define configMINIMAL_STACK_SIZE				( ( unsigned short ) 256 ) /* Large in case configUSE_TASK_FPU_SUPPORT is 2 in which case all tasks have an FPU context. */
+#define configTOTAL_HEAP_SIZE					( 512 * 1024 )
+#define configMAX_TASK_NAME_LEN					( 20 )
 #define configUSE_TRACE_FACILITY				1
 #define configUSE_16_BIT_TICKS					0
 #define configIDLE_SHOULD_YIELD					1
@@ -94,11 +94,8 @@
 #define configUSE_QUEUE_SETS					1
 #define configSUPPORT_STATIC_ALLOCATION			0
 
-/* Include the query-heap CLI command to query the free heap space. */
-#define configINCLUDE_QUERY_HEAP_COMMAND		1
-
 /* Co-routine definitions. */
-#define configUSE_CO_ROUTINES 					0
+#define configUSE_CO_ROUTINES 					1
 #define configMAX_CO_ROUTINE_PRIORITIES 		( 2 )
 
 /* Software timer definitions. */
@@ -136,13 +133,6 @@ readable ASCII form.  See the notes in the implementation of vTaskList() within
 FreeRTOS/Source/tasks.c for limitations. */
 #define configUSE_STATS_FORMATTING_FUNCTIONS	1
 
-/* The size of the global output buffer that is available for use when there
-are multiple command interpreters running at once (for example, one on a UART
-and one on TCP/IP).  This is done to prevent an output buffer being defined by
-each implementation - which would waste RAM.  In this case, there is only one
-command interpreter running. */
-#define configCOMMAND_INT_MAX_OUTPUT_SIZE 2096
-
 /* Normal assert() semantics without relying on the provision of an assert.h
 header file. */
 void vAssertCalled( const char * pcFile, unsigned long ulLine );
@@ -171,47 +161,9 @@ void vConfigureTickInterrupt( void );
 void vClearTickInterrupt( void );
 #define configCLEAR_TICK_INTERRUPT() vClearTickInterrupt()
 
-/* The following constant describe the hardware, and are correct for the
-Zynq MPU. */
+/* The following constant describe the hardware */
 #define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		( GIC_DISTRIBUTOR_BASE )
 #define configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET ( -0xf00 )
 #define configUNIQUE_INTERRUPT_PRIORITIES				32
-
-
-
-/****** Network configuration settings - only used when the lwIP example is
-built.  See the page that documents this demo on the http://www.FreeRTOS.org
-website for more information. ***********************************************/
-
-/* The priority for the task that unblocked by the MAC interrupt to process
-received packets. */
-#define configMAC_INPUT_TASK_PRIORITY		( configMAX_PRIORITIES - 1 )
-
-/* The priority of the task that runs the lwIP stack. */
-#define configLWIP_TASK_PRIORITY			( configMAX_PRIORITIES - 2 )
-
-/* The priority of the task that uses lwIP sockets to provide a simple command
-line interface. */
-#define configCLI_TASK_PRIORITY				( tskIDLE_PRIORITY )
-
-/* MAC address configuration. */
-#define configMAC_ADDR0	0x00
-#define configMAC_ADDR1	0x13
-#define configMAC_ADDR2	0x14
-#define configMAC_ADDR3	0x15
-#define configMAC_ADDR4	0x15
-#define configMAC_ADDR5	0x16
-
-/* IP address configuration. */
-#define configIP_ADDR0		172
-#define configIP_ADDR1		25
-#define configIP_ADDR2		218
-#define configIP_ADDR3		200
-
-/* Netmask configuration. */
-#define configNET_MASK0		255
-#define configNET_MASK1		255
-#define configNET_MASK2		255
-#define configNET_MASK3		0
 
 #endif /* FREERTOS_CONFIG_H */

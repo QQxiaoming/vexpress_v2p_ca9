@@ -3,13 +3,13 @@
 
 typedef struct
 {
-	__IOM uint32_t dr;		/* 0x00 Data register */
-	__IOM uint32_t ecr;		/* 0x04 Error clear register (Write) */
+	__IOM uint32_t dr;		    /* 0x00 Data register */
+	__IOM uint32_t ecr;		    /* 0x04 Error clear register (Write) */
 	__IOM uint32_t pl010_lcrh;	/* 0x08 Line control register, high byte */
 	__IOM uint32_t pl010_lcrm;	/* 0x0C Line control register, middle byte */
 	__IOM uint32_t pl010_lcrl;	/* 0x10 Line control register, low byte */
 	__IOM uint32_t pl010_cr;	/* 0x14 Control register */
-	__IOM uint32_t fr;		/* 0x18 Flag register (Read only) */
+	__IOM uint32_t fr;		    /* 0x18 Flag register (Read only) */
 	__IOM uint32_t pl011_rlcr;	/* 0x1c Receive line control register */
 	__IOM uint32_t ilpr;		/* 0x20 IrDA low-power counter register */
 	__IOM uint32_t pl011_ibrd;	/* 0x24 Integer baud rate register */
