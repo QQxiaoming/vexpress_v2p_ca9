@@ -74,15 +74,15 @@ SECTIONS
 		_etext = .;        /* define a global symbols at end of code */
 	} > ROM
 
-	.ARM.extab   : 
+	.ARM.extab : 
 	{ 
 		*(.ARM.extab* .gnu.linkonce.armextab.*) 
 	} > ROM
 
-	.ARM : 
+	.ARM.exidx : 
 	{
 		__exidx_start = .;
-		*(.ARM.exidx*)
+		*(.ARM.exidx* .gnu.linkonce.armexidx.*)
 		__exidx_end = .;
 	} > ROM
 
