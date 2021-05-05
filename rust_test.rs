@@ -1,7 +1,5 @@
 #![no_std]
 
-use core::panic::PanicInfo;
-
 extern "C" {
     fn _putchar(ch:char);
 }
