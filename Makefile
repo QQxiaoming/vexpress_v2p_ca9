@@ -16,16 +16,20 @@ TARGET = v2p_ca9
 # debug build?
 DEBUG = 1
 # optimization
-OPT = -Og
+OPT_LEVEL = 1
 # tools dir
 OS_NAME = $(shell uname -o)
 LC_OS_NAME = $(shell echo $(OS_NAME) | tr '[A-Z]' '[a-z]')
 ifeq ($(LC_OS_NAME), cygwin)
-GCC_DIR  = /cygdrive/c/Users/pc/Desktop/v2p_ca9/gcc-arm-10.2-2020.11-mingw-w64-i686-arm-none-linux-gnueabihf/bin
-QEMU_DIR = /cygdrive/c/Program\ Files/qemu
+GCC_DIR     = /cygdrive/c/Users/pc/Desktop/v2p_ca9/gcc-arm-10.2-2020.11-mingw-w64-i686-arm-none-linux-gnueabihf/bin
+QEMU_DIR    = /cygdrive/c/Program\ Files/qemu
+INSIGHT_DIR = /cygdrive/c/Users/pc/Desktop/v2p_ca9/arm-none-linux-gnueabihf-insight/bin
+RUST_DIR    = /cygdrive/c/Users/pc/Desktop/v2p_ca9/cargo
 else
-GCC_DIR  = /media/xiaoming/xiaoming_data/data/qiaoqm/linux_kernel/ci_linux/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
-QEMU_DIR = /usr/local/bin
+GCC_DIR     = /media/xiaoming/xiaoming_data/data/qiaoqm/linux_kernel/ci_linux/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
+QEMU_DIR    = /usr/local/bin
+INSIGHT_DIR = /opt/arm-none-linux-gnueabihf-insight/bin
+RUST_DIR    = ~/.cargo/bin
 endif
 
 #######################################
@@ -42,8 +46,9 @@ LD        = $(PREFIX)ld
 HEX       = $(OBJCOPY) -O ihex
 BIN       = $(OBJCOPY) -O binary -S
 GDB       = $(PREFIX)gdb
+INSIGHT   = $(INSIGHT_DIR)/arm-none-linux-gnueabihf-insight
 QEMU      = $(QEMU_DIR)/qemu-system-arm
-
+RUSTC     = $(RUST_DIR)/rustc
 
 PROJECTBASE = $(PWD)
 override PROJECTBASE    := $(abspath $(PROJECTBASE))
@@ -73,6 +78,9 @@ ASM_SOURCES =  \
         ${wildcard $(TOP_DIR)/freertos/portable/GCC/ARM_CA9/*.s} \
         ${wildcard $(TOP_DIR)/cstartup.s}
 
+# RUST sources
+RUST_SOURCES =  \
+        ${wildcard $(TOP_DIR)/*.rs}
 
 ######################################
 # third party ibrary
@@ -103,12 +111,15 @@ C_INCLUDES = \
 
 
 # compile gcc flags
-ASFLAGS = -marm -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=neon $(AS_DEFS) $(AS_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -fno-pie 
+ASFLAGS = -marm -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=neon $(AS_DEFS) $(AS_INCLUDES) -O$(OPT_LEVEL) -Wall -fdata-sections -ffunction-sections -fno-pie 
 
-CFLAGS = -marm -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=neon $(C_DEFS) $(C_INCLUDES) $(OPT) -Wall -fdata-sections -ffunction-sections -fno-pie 
+CFLAGS = -marm -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=neon $(C_DEFS) $(C_INCLUDES) -O$(OPT_LEVEL) -Wall -fdata-sections -ffunction-sections -fno-pie 
+
+RUSTFLAGS = -C panic=abort -C opt-level=$(OPT_LEVEL) --crate-type=lib --emit obj --emit asm --emit dep-info --target=armv7-unknown-linux-gnueabihf
 
 ifeq ($(DEBUG), 1)
 CFLAGS += -g -gdwarf-2
+RUSTFLAGS += -g
 endif
 
 # Generate dependency information
@@ -139,6 +150,9 @@ vpath %.c $(sort $(dir $(C_SOURCES)))
 # list of ASM program objects
 OBJECTS += $(addprefix $(OBJ_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
+# list of RUST program objects
+OBJECTS += $(addprefix $(OBJ_DIR)/,$(notdir $(RUST_SOURCES:.rs=.o)))
+vpath %.s $(sort $(dir $(RUST_SOURCES)))
 # list of lib objects
 OBJECTS += $(THIRDLIB)
 
@@ -149,6 +163,10 @@ $(OBJ_DIR)/%.o: %.c Makefile | $(OBJ_DIR)
 $(OBJ_DIR)/%.o: %.s Makefile | $(OBJ_DIR)
 	@echo AS $(notdir $<)
 	@$(AS) -c $(subst $(TOP_DIR), ., $(CFLAGS)) $(subst $(TOP_DIR), ., $<) -o $@
+
+$(OBJ_DIR)/%.o: %.rs Makefile | $(OBJ_DIR)
+	@echo RUSTC $(notdir $<)
+	@$(RUSTC) $(RUSTFLAGS) $(subst $(TOP_DIR), ., $<) --out-dir $(OBJ_DIR)
 
 $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) $(LD_FILE) Makefile
 	@echo LD $(notdir $@)
@@ -191,6 +209,10 @@ clean:
 debug:
 	@echo start GDB
 	@$(GDB) -x $(BUILD_DIR)/../gdb.script $(BUILD_DIR)/$(TARGET).elf
+
+debug_gui:
+	@echo start GDB
+	@$(INSIGHT) -x $(BUILD_DIR)/../gdb.script $(BUILD_DIR)/$(TARGET).elf
 
 qemu:
 	@echo start qemu
