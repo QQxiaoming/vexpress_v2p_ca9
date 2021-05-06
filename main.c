@@ -35,8 +35,9 @@ void task2(void *p_arg)
     for(;;)
     {
         debug_logdebug(LOG_SYS_INFO,"task2 0x%x\n",time++);
-        extern uint32_t rust_test(void);
-        debug_logdebug(LOG_SYS_INFO,"rust test %d\n",rust_test());
+        extern uint32_t rust_add(uint32_t,uint32_t);
+        debug_logdebug(LOG_SYS_INFO,"rust test %d\n",rust_add(10,time));
+        debug_logdebug(LOG_SYS_INFO,"0x80008000 %x\n",*(volatile uint32_t *)(0x80008000));
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
