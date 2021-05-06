@@ -24,7 +24,7 @@ ifeq ($(LC_OS_NAME), cygwin)
 GCC_DIR     = /cygdrive/c/Users/pc/Desktop/v2p_ca9/gcc-arm-10.2-2020.11-mingw-w64-i686-arm-none-linux-gnueabihf/bin
 QEMU_DIR    = /cygdrive/c/Program\ Files/qemu
 INSIGHT_DIR = /cygdrive/c/Users/pc/Desktop/v2p_ca9/arm-none-linux-gnueabihf-insight/bin
-RUST_DIR    = /cygdrive/c/Users/pc/Desktop/v2p_ca9/cargo
+RUST_DIR    = /cygdrive/c/Users/pc/.cargo/bin
 else
 GCC_DIR     = /media/xiaoming/xiaoming_data/data/qiaoqm/linux_kernel/ci_linux/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
 QEMU_DIR    = /usr/local/bin
@@ -80,7 +80,7 @@ ASM_SOURCES =  \
 
 # RUST sources
 RUST_SOURCES =  \
-        ${wildcard $(TOP_DIR)/*.rs}
+        ${wildcard $(TOP_DIR)/rust_src/rust_test.rs}
 
 ######################################
 # third party ibrary
@@ -133,8 +133,8 @@ LD_FILE = $(TARGET).lds
 LDSCRIPT = $(PROJECTBASE)/$(LD_FILE)
 
 # libraries
-LIBS = -lm 
-LIBDIR =
+LIBS = -lm -lrust_core
+LIBDIR = -L$(TOP_DIR)/rust_core_lib
 LDFLAGS = -marm -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=neon -nostartfiles -T$(LDSCRIPT) $(LIBDIR) $(LIBS) -Wl,-Map=$(BUILD_DIR)/$(TARGET).map,--cref -static -Wl,--gc-sections -Wl,--build-id=none
 
 # default action: build all
@@ -152,7 +152,7 @@ OBJECTS += $(addprefix $(OBJ_DIR)/,$(notdir $(ASM_SOURCES:.s=.o)))
 vpath %.s $(sort $(dir $(ASM_SOURCES)))
 # list of RUST program objects
 OBJECTS += $(addprefix $(OBJ_DIR)/,$(notdir $(RUST_SOURCES:.rs=.o)))
-vpath %.s $(sort $(dir $(RUST_SOURCES)))
+vpath %.rs $(sort $(dir $(RUST_SOURCES)))
 # list of lib objects
 OBJECTS += $(THIRDLIB)
 
@@ -168,7 +168,11 @@ $(OBJ_DIR)/%.o: %.rs Makefile | $(OBJ_DIR)
 	@echo RUSTC $(notdir $<)
 	@$(RUSTC) $(RUSTFLAGS) $(subst $(TOP_DIR), ., $<) --out-dir $(OBJ_DIR)
 
-$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) $(LD_FILE) Makefile
+$(TOP_DIR)/rust_core_lib/librust_core.a: $(TOP_DIR)/rust_core_lib/rust_core.rs Makefile
+	@echo BUILD $(notdir $@)
+	@$(RUSTC) -C panic=abort -C opt-level=$(OPT_LEVEL) --crate-type=staticlib --target=armv7-unknown-linux-gnueabihf $(subst $(TOP_DIR), ., $<) -o $(subst $(TOP_DIR), ., $@)
+
+$(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) $(LD_FILE) $(TOP_DIR)/rust_core_lib/librust_core.a Makefile
 	@echo LD $(notdir $@)
 	@$(CC) $(OBJECTS) $(subst $(TOP_DIR), ., $(LDFLAGS)) -o $@
 
