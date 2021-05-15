@@ -13,6 +13,7 @@ macro_rules! print {
     ($($arg:tt)*) => (_print(format_args!($($arg)*)));
 }
 
+#[allow(improper_ctypes)]
 extern "C" {
     fn _putchar(ch:char);
 }
