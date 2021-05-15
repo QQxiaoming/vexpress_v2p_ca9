@@ -66,3 +66,15 @@ pub unsafe extern "C" fn rust_add(rect1: u32,rect2: u32) -> u32 {
 
     return rect1 * rect2;
 }
+
+pub mod rust_uart;
+use rust_uart::USART0;
+
+#[no_mangle]
+pub unsafe extern "C" fn test_rust_uart() {
+    println!("pl011_rlcr is {}", (*USART0::ptr()).pl011_rlcr.read());
+    println!("pl011_ibrd is {}", (*USART0::ptr()).pl011_ibrd.read());
+    println!("pl011_fbrd is {}", (*USART0::ptr()).pl011_fbrd.read());
+    println!("pl011_lcrh is {}", (*USART0::ptr()).pl011_lcrh.read());
+    println!("pl011_cr is {}", (*USART0::ptr()).pl011_cr.read());
+}
