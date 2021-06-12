@@ -48,6 +48,35 @@ _program_start:
         mcr     p15, 0, r0, c1, c0, 0   // write value back to CP15 System Control register
         isb
 
+        mov     r2, #0
+        mcr	15, 0, r2, c8, c7, 0
+        mcr	15, 0, r2, c7, c5, 6
+        mcr	15, 0, r2, c7, c5, 6
+        dsb	sy
+        isb	sy
+        mcr	15, 0, r2, c7, c5, 0
+        dsb	sy
+        isb	sy
+
+        mov     r2, #0
+        orr	r2, r2, #0x60000000
+        ldr     r3, =boot_page_table
+        sub     r3, r3, r2
+        mcr	15, 0, r3, c2, c0, 0
+        isb	sy
+        mov	r3, #0x1
+        mcr	15, 0, r3, c3, c0, 0
+        isb	sy
+        mrc	15, 0, r3, c1, c0, 0
+        bic	r3, r3, #0x30000003
+        orr	r3, r3, #0x20000001
+        mcr	15, 0, r3, c1, c0, 0
+        isb	sy
+
+        mov     r3, #0
+        orr	r3, r3, #0x60000000
+        add	pc, pc, r3
+
         // Configure ACTLR
         mrc     p15, 0, r0, c1, c0, 1   // Read CP15 Auxiliary Control Register
         orr     r0, r0, #(0x1 << 1)     // Enable L2 prefetch hit (UNK/WI since r4p1)
@@ -310,5 +339,26 @@ not_jump_handler:
         pop     {r0-r3, r12}
         pop     {lr}
         subs    pc, lr, #4
+
+        .section .init.data
+        .align 16
+boot_page_table:
+        # 0x48000000 -> 0x48000000 (1M)
+        # 0x60000000 -> 0x60000000 (1M)
+        # 0xc0000000 -> 0x60000000 (1G)
+        .zero 4 * (1152 - 0)
+        .word 0x48000000|0x15c06
+        .zero 4 * (384  - 1)
+        .word 0x60000000|0x15c06
+        .zero 4 * (1536 - 1)
+        .word 0x60000000|0x15c06
+        .word 0x60100000|0x15c06
+        .word 0x60200000|0x15c06
+        .word 0x60300000|0x15c06
+        .word 0x60400000|0x15c06
+        .word 0x60500000|0x15c06
+        .word 0x60600000|0x15c06
+        .word 0x60700000|0x15c06
+        .zero 4 * (1024 - 8)
 
         .end

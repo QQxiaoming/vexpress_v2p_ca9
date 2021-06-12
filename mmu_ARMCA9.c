@@ -31,8 +31,8 @@ void MMU_CreateTranslationTable(void)
     mmu_region_attributes_Type region;
 
     //Create 4GB of faulting entries
-    MMU_TTSection(TTB_BASE,0,0,4096,DESCRIPTOR_FAULT);
-
+    //MMU_TTSection(TTB_BASE,0,0,4096,DESCRIPTOR_FAULT);
+    uint32_t *ttbr0 = (uint32_t *)(__get_TTBR0()+0x60000000);
     /*
      * Generate descriptors. Refer to core_ca.h to get information about attributes
      */
@@ -53,19 +53,19 @@ void MMU_CreateTranslationTable(void)
     /*
      * Define MMU flat-map regions and attributes
      */
-    MMU_TTSection(TTB_BASE,V2P_CA9_MP_USER_SRAM_BASE,V2P_CA9_MP_USER_SRAM_BASE,32,Sect_Normal_RW);  //0x48000000 - 0x48ffffff
-    MMU_TTSection(TTB_BASE,V2P_CA9_MP_DDR2_LOW_BASE,V2P_CA9_MP_DDR2_LOW_BASE,512,Sect_Normal_RW);  //0x60000000 - 0x7fffffff
-    MMU_TTSection(TTB_BASE,V2P_CA9_MP_DDR2_HIGHT_BASE,V2P_CA9_MP_DDR2_HIGHT_BASE,512,Sect_Normal_RW);  //0x80000000 - 0x9fffffff
+    //MMU_TTSection(TTB_BASE,V2P_CA9_MP_USER_SRAM_BASE,V2P_CA9_MP_USER_SRAM_BASE,32,Sect_Normal_RW);  //0x48000000 - 0x48ffffff
+    //MMU_TTSection(TTB_BASE,V2P_CA9_MP_DDR2_LOW_BASE,V2P_CA9_MP_DDR2_LOW_BASE,512,Sect_Normal_RW);  //0x60000000 - 0x7fffffff
+    //MMU_TTSection(TTB_BASE,V2P_CA9_MP_DDR2_HIGHT_BASE,V2P_CA9_MP_DDR2_HIGHT_BASE,512,Sect_Normal_RW);  //0x80000000 - 0x9fffffff
 
-    MMU_TTPage64k(TTB_BASE,V2P_CA9_MP_PERIPH_BASE_CS7,V2P_CA9_MP_PERIPH_BASE_CS7,16,Page_L1_64k,(uint32_t *)TTB_L2_BASE_64k_NUM1,DESCRIPTOR_FAULT);
-    MMU_TTPage64k(TTB_BASE,V2P_CA9_MP_UART0_BASE,V2P_CA9_MP_UART0_BASE,1,Page_L1_64k,(uint32_t *)TTB_L2_BASE_64k_NUM1,Page_64k_Device_RW);
+    MMU_TTPage64k(ttbr0,V2P_CA9_MP_PERIPH_BASE_CS7,V2P_CA9_MP_PERIPH_BASE_CS7,16,Page_L1_64k,(uint32_t *)TTB_L2_BASE_64k_NUM1,DESCRIPTOR_FAULT);
+    MMU_TTPage64k(ttbr0,V2P_CA9_MP_UART0_BASE,V2P_CA9_MP_UART0_BASE,1,Page_L1_64k,(uint32_t *)TTB_L2_BASE_64k_NUM1,Page_64k_Device_RW);
 
     // Create (256 * 4k)=1MB faulting entries to cover private address space. Needs to be marked as Device memory
-    MMU_TTPage4k(TTB_BASE,__get_CBAR(),__get_CBAR(),256,Page_L1_4k,(uint32_t *)TTB_L2_BASE_4k_NUM0,DESCRIPTOR_FAULT);
+    MMU_TTPage4k(ttbr0,__get_CBAR(),__get_CBAR(),256,Page_L1_4k,(uint32_t *)TTB_L2_BASE_4k_NUM0,DESCRIPTOR_FAULT);
     // Define private address space entry.
-    MMU_TTPage4k(TTB_BASE,__get_CBAR(),__get_CBAR(),3,Page_L1_4k,(uint32_t *)TTB_L2_BASE_4k_NUM0,Page_4k_Device_RW);
+    MMU_TTPage4k(ttbr0,__get_CBAR(),__get_CBAR(),3,Page_L1_4k,(uint32_t *)TTB_L2_BASE_4k_NUM0,Page_4k_Device_RW);
     // Define L2CC entry.  Uncomment if PL310 is present
-    MMU_TTPage4k(TTB_BASE,V2P_CA9_MP_PL310_BASE,V2P_CA9_MP_PL310_BASE,1,Page_L1_4k,(uint32_t *)TTB_L2_BASE_4k_NUM0,Page_4k_Device_RW);
+    MMU_TTPage4k(ttbr0,V2P_CA9_MP_PL310_BASE,V2P_CA9_MP_PL310_BASE,1,Page_L1_4k,(uint32_t *)TTB_L2_BASE_4k_NUM0,Page_4k_Device_RW);
 
     /* 
      * Set location of level 1 page table
@@ -78,7 +78,7 @@ void MMU_CreateTranslationTable(void)
      * 1     - S       0x0  (Non-shared)
      * 0     - IRGN[1] 0x0  (Inner WB WA) 
      */
-    __set_TTBR0(__TTB_BASE | 0x48);
+    __set_TTBR0((((uint32_t)ttbr0)-0x60000000) | 0x48);
     __ISB();
 
     /* 

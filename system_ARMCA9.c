@@ -34,7 +34,11 @@ void SystemInit (void)
     MMU_CreateTranslationTable();
 
     // Enable MMU
-    MMU_Enable();
+    //MMU_Enable();
+    // Invalidate entire Unified TLB
+    __set_TLBIALL(0);
+    __DSB();
+    __ISB();
 
     // Enable Caches
     L1C_EnableCaches();

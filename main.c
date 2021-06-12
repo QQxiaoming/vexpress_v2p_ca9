@@ -39,15 +39,15 @@ void task2(void *p_arg)
         extern void test_rust_uart(void);
         debug_logdebug(LOG_SYS_INFO,"rust test %d\n",rust_add(10,time));
         test_rust_uart();
-        debug_logdebug(LOG_SYS_INFO,"0x80008000 %x\n",*(volatile uint32_t *)(0x80008000));
+        debug_logdebug(LOG_SYS_INFO,"0xC0008000 %x\n",*(volatile uint32_t *)(0xC0008000));
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
 static void vTaskCreate (void *p_arg)
 { 
-    xTaskCreate(task1,"task1",256,NULL,4,NULL);
-    xTaskCreate(task2,"task2",256,NULL,4,NULL);
+    xTaskCreate(task1,"task1",2048,NULL,4,NULL);
+    xTaskCreate(task2,"task2",2048,NULL,4,NULL);
 
     vTaskDelete(NULL);
 }

@@ -26,7 +26,7 @@ QEMU_DIR    = /cygdrive/c/Program\ Files/qemu
 INSIGHT_DIR = /cygdrive/c/Users/pc/Desktop/v2p_ca9/arm-none-linux-gnueabihf-insight/bin
 RUST_DIR    = /cygdrive/c/Users/pc/.cargo/bin
 else
-GCC_DIR     = /media/xiaoming/xiaoming_data/data/qiaoqm/linux_kernel/ci_linux/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
+GCC_DIR     = /opt/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
 QEMU_DIR    = /usr/local/bin
 INSIGHT_DIR = /opt/arm-none-linux-gnueabihf-insight/bin
 RUST_DIR    = ~/.cargo/bin
@@ -220,11 +220,26 @@ debug_gui:
 
 qemu:
 	@echo start qemu
-	@$(QEMU) -M vexpress-a9 -m 1024m -smp 4 -kernel $(BUILD_DIR)/$(TARGET).elf -nographic
+	@$(QEMU) \
+	-M vexpress-a9 \
+	-m 1024m \
+	-smp 4 \
+	-device loader,file=$(BUILD_DIR)/$(TARGET).bin,addr=0x60000000 \
+	-device loader,addr=0x60000000,cpu-num=0 \
+	-device loader,addr=0x60000000,cpu-num=1 \
+	-device loader,addr=0x60000000,cpu-num=2 \
+	-device loader,addr=0x60000000,cpu-num=3 \
+	-nographic
 
 qemu_gdb:
 	@echo start qemu
-	@$(QEMU) -M vexpress-a9 -m 1024m -smp 4 -kernel $(BUILD_DIR)/$(TARGET).elf -nographic -gdb tcp::1234 -S
+	@$(QEMU) \
+	-M vexpress-a9 \
+	-m 1024m \
+	-smp 4 \
+	-device loader,file=$(BUILD_DIR)/$(TARGET).bin,addr=0x60000000 \
+	-nographic \
+	-gdb tcp::1234 -S
 
 #######################################
 # dependencies
