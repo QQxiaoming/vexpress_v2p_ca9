@@ -39,7 +39,7 @@ void task2(void *p_arg)
         extern void test_rust_uart(void);
         debug_logdebug(LOG_SYS_INFO,"rust test %d\n",rust_add(10,time));
         test_rust_uart();
-        debug_logdebug(LOG_SYS_INFO,"0xC0008000 %x\n",*(volatile uint32_t *)(0x60008000));
+        debug_logdebug(LOG_SYS_INFO,"0xC0008000 %x\n",*(volatile uint32_t *)(0xC0008000));
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
@@ -137,8 +137,40 @@ void vApplicationFPUSafeIRQHandler( uint32_t ulICCIAR )
     }
 }
 
-void __c_panic(uint32_t a,uint32_t b,uint32_t c)
+const char * panic_str[] = 
 {
-    debug_logdebug(LOG_SYS_INFO,"a 0x%x b 0x%x c 0x%x\n",a,b,c);
+    "unknow",
+    "Alignment fault",
+    "Debug event",
+    "Access flag fault L1",
+    "Fault on instruction cache maintenance",
+    "Translation fault L1",
+    "Access flag fault L2",
+    "Translation fault L2",
+    "Synchronous external abort",
+    "Domain fault L1",
+    "unknow",
+    "Domain fault L2",
+    "Synchronous external abort on translation table walk L1",
+    "Permission fault L1",
+    "Synchronous external abort on translation table walk L2",
+    "Permission fault L2",
+    "TLB conflict abort",
+    "unknow","unknow","unknow","unknow","unknow",
+    "Asynchronous external abort",
+    "unknow",
+    "Asynchronous parity error on memory access",
+    "Synchronous parity error on memory access",
+    "unknow","unknow",
+    "Synchronous parity error on translation table walk L1",
+    "unknow",
+    "Synchronous parity error on translation table walk L2",
+    "unknow",
+};
+
+void __c_panic(uint32_t fsr,uint32_t far,uint32_t pc)
+{
+    const char * str = panic_str[(((fsr&0x400)>>6)|(fsr&0xf))];
+    debug_logerr(LOG_SYS_INFO,"%s:\n\tfsr 0x%08x\tfar 0x%08x\tpc 0x%08x\n",str,fsr,far,pc);
     while(1);
 }

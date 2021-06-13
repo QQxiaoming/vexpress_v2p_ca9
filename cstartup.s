@@ -102,6 +102,13 @@ core0_start:
         // Set up stack for each exceptional mode
         mrs     r0, cpsr                // Original PSR value
 
+        // Set up the abt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #ABT_MODE       // Set ABT mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =ABT_STACK_CORE0    // End of ABT_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
         // Set up the svc stack pointer.
         bic     r0, r0, #MODE_MSK       // Clear the mode bits
         orr     r0, r0, #SVC_MODE       // Set SVC mode bits
@@ -169,6 +176,13 @@ core1_start:
         // Set up stack for each exceptional mode
         mrs     r0, cpsr                // Original PSR value
 
+        // Set up the abt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #ABT_MODE       // Set ABT mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =ABT_STACK_CORE1    // End of ABT_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
         // Set up the svc stack pointer.
         bic     r0, r0, #MODE_MSK       // Clear the mode bits
         orr     r0, r0, #SVC_MODE       // Set SVC mode bits
@@ -205,6 +219,13 @@ core2_start:
         // Set up stack for each exceptional mode
         mrs     r0, cpsr                // Original PSR value
 
+        // Set up the abt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #ABT_MODE       // Set ABT mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =ABT_STACK_CORE2    // End of ABT_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
+
         // Set up the svc stack pointer.
         bic     r0, r0, #MODE_MSK       // Clear the mode bits
         orr     r0, r0, #SVC_MODE       // Set SVC mode bits
@@ -240,6 +261,13 @@ core2_start:
 core3_start:
         // Set up stack for each exceptional mode
         mrs     r0, cpsr                // Original PSR value
+
+        // Set up the abt stack pointer.
+        bic     r0, r0, #MODE_MSK       // Clear the mode bits
+        orr     r0, r0, #ABT_MODE       // Set ABT mode bits
+        msr     cpsr_c, r0              // Change the mode
+        ldr     r1, =ABT_STACK_CORE3    // End of ABT_STACK
+        bic     sp,r1,#0x7              // Make sure SP is 8 aligned
 
         // Set up the svc stack pointer.
         bic     r0, r0, #MODE_MSK       // Clear the mode bits
@@ -282,8 +310,9 @@ Prefetch_Handler:
         .section .text.handler
 	.align 4
 Abort_Handler:
-        mov     r1, lr
-        mrs     r2, spsr
+        mrc     p15, 0, r0, c5, c0, 0 // get FSR
+        mrc     p15, 0, r1, c6, c0, 0 // get FAR
+        mov     r2, lr
         b __c_panic
 
         .section .text.handler
