@@ -161,5 +161,11 @@ enum _retval
 typedef enum {RESET = 0, SET = !RESET} FlagStatus, ITStatus;
 typedef enum {DISABLE = 0, ENABLE = !DISABLE} FunctionalState;
 
+#define SRAMMEM_PA_TO_VA(pa) (pa+0x98000000UL)
+#define SRAMMEM_VA_TO_PA(va) (va-0x98000000UL)
+#define DDRMEM_PA_TO_VA(pa) (pa+0x60000000UL)
+#define DDRMEM_VA_TO_PA(va) (va-0x60000000UL)
+#define PERIPH_PA_TO_VA(pa) (pa+0xE0000000UL)
+#define PERIPH_VA_TO_PA(va) (va-0xE0000000UL)
 
 #endif /* V2P_CA9_SYSTEM_H */

@@ -55,7 +55,7 @@ static void vTaskCreate (void *p_arg)
 int main()
 {
     uint32_t mpid = __get_MPIDR()&0xFFF;
-    pl01x_init(V2P_CA9_MP_UART0_BASE,115200);
+    pl01x_init(PERIPH_PA_TO_VA(V2P_CA9_MP_UART0_BASE),115200);
     debug_logdebug(LOG_SYS_INFO,"this core MPIDR 0x%x\n",mpid);
     for(int i=0;i<1000;i++) delay(100000);
     smp_start_flag = mpid+1;

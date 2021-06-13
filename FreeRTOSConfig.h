@@ -162,7 +162,7 @@ void vClearTickInterrupt( void );
 #define configCLEAR_TICK_INTERRUPT() vClearTickInterrupt()
 
 /* The following constant describe the hardware */
-#define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		( GIC_DISTRIBUTOR_BASE )
+#define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		(PERIPH_PA_TO_VA( GIC_DISTRIBUTOR_BASE ))
 #define configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET ( -0xf00 )
 #define configUNIQUE_INTERRUPT_PRIORITIES				32
 

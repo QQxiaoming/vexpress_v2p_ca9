@@ -38,7 +38,7 @@ typedef struct {
 	__IOM uint32_t Config[0];
 } virtio_regs;
 
-#define VIRIO_MMIO           ((virtio_regs *)QEMU_VIRIO_MMIO_BASE)
+#define VIRIO_MMIO           ((virtio_regs *)PERIPH_PA_TO_VA(QEMU_VIRIO_MMIO_BASE))
 
 void virio_mmio_info(void)
 {

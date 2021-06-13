@@ -343,22 +343,23 @@ not_jump_handler:
         .section .init.data
         .align 16
 boot_page_table:
-        # 0x48000000 -> 0x48000000 (1M)
-        # 0x60000000 -> 0x60000000 (1M)
-        # 0xc0000000 -> 0x60000000 (1G)
-        .zero 4 * (1152 - 0)
-        .word 0x48000000|0x15c06
-        .zero 4 * (384  - 1)
-        .word 0x60000000|0x15c06
-        .zero 4 * (1536 - 1)
-        .word 0x60000000|0x15c06
-        .word 0x60100000|0x15c06
-        .word 0x60200000|0x15c06
-        .word 0x60300000|0x15c06
-        .word 0x60400000|0x15c06
-        .word 0x60500000|0x15c06
-        .word 0x60600000|0x15c06
-        .word 0x60700000|0x15c06
-        .zero 4 * (1024 - 8)
+        # 0x60000000 -> 0x60000000 (1M) this temp only use in boot
+        # 0xc0000000 -> 0x60000000 (8M)
+        # 0xe0000000 -> 0x48000000 (1M)
+        .zero 4 * (1536 - 0)     //0x00000000 - 0x5fffffff
+        .word 0x60000000|0x15c06 //0x60000000 - 0x600fffff
+        .zero 4 * (1536 - 1)     //0x60100000 - 0xbfffffff
+        .word 0x60000000|0x15c06 //0xc0000000 - 0xc00fffff
+        .word 0x60100000|0x15c06 //0xc0100000 - 0xc01fffff
+        .word 0x60200000|0x15c06 //0xc0200000 - 0xc02fffff
+        .word 0x60300000|0x15c06 //0xc0300000 - 0xc03fffff
+        .word 0x60400000|0x15c06 //0xc0400000 - 0xc04fffff
+        .word 0x60500000|0x15c06 //0xc0500000 - 0xc05fffff
+        .word 0x60600000|0x15c06 //0xc0600000 - 0xc06fffff
+        .word 0x60700000|0x15c06 //0xc0700000 - 0xc07fffff
+        .zero 4 * (512 - 8)      //0xc0800000 - 0xdfffffff
+        .word 0x48000000|0x15c06 //0xe0000000 - 0xe00fffff
+        .zero 4 * (256 - 1)      //0xe0100000 - 0xefffffff
+        .zero 4 * (256)          //0xf0000000 - 0xffffffff
 
         .end

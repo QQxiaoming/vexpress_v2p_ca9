@@ -11,9 +11,9 @@ void _putchar(char ch)
 {
     if ('\n' == ch)
     {
-        pl01x_putc(V2P_CA9_MP_UART0_BASE,'\r');
+        pl01x_putc(PERIPH_PA_TO_VA(V2P_CA9_MP_UART0_BASE),'\r');
     }
-    pl01x_putc(V2P_CA9_MP_UART0_BASE,ch);
+    pl01x_putc(PERIPH_PA_TO_VA(V2P_CA9_MP_UART0_BASE),ch);
     return;
 }
 

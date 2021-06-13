@@ -13,7 +13,7 @@ typedef struct
     __IOM  uint32_t NS_ACCESS_CONTROL;
     __IOM  uint32_t S_ACCESS_CONTROL;
 } SCU_TypeDef;
-#define SCU           ((SCU_TypeDef *)V2P_CA9_MP_SCU_BASE)
+#define SCU           ((SCU_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_SCU_BASE))
 
 typedef struct
 {
@@ -25,7 +25,7 @@ typedef struct
     __IOM  uint32_t COMPARATOR_H;
     __IOM  uint32_t AUTO_INCREMENT;
 } GLOBA_TIMER_TypeDef;
-#define GLOBA_TIMER      ((GLOBA_TIMER_TypeDef *)V2P_CA9_MP_GLOBA_TIMER_BASE)
+#define GLOBA_TIMER      ((GLOBA_TIMER_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_GLOBA_TIMER_BASE))
 
 typedef struct
 {
@@ -79,10 +79,10 @@ typedef struct
     __IOM  uint32_t COMPONETID[3]; //0xff0 - 0xffc
 
 } CORE_DEBUG_TypeDef;
-#define CORE0_DEBUG       ((CORE_DEBUG_TypeDef *)V2P_CA9_MP_CORE0_DEBUG_APB_BASE)
-#define CORE1_DEBUG       ((CORE_DEBUG_TypeDef *)V2P_CA9_MP_CORE1_DEBUG_APB_BASE)
-#define CORE2_DEBUG       ((CORE_DEBUG_TypeDef *)V2P_CA9_MP_CORE2_DEBUG_APB_BASE)
-#define CORE3_DEBUG       ((CORE_DEBUG_TypeDef *)V2P_CA9_MP_CORE3_DEBUG_APB_BASE)
+#define CORE0_DEBUG       ((CORE_DEBUG_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_CORE0_DEBUG_APB_BASE))
+#define CORE1_DEBUG       ((CORE_DEBUG_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_CORE1_DEBUG_APB_BASE))
+#define CORE2_DEBUG       ((CORE_DEBUG_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_CORE2_DEBUG_APB_BASE))
+#define CORE3_DEBUG       ((CORE_DEBUG_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_CORE3_DEBUG_APB_BASE))
 
 typedef struct
 {
@@ -123,7 +123,7 @@ typedef struct
     __IOM  uint32_t PERIPHERALID[8]; //0xfd0 - 0xfec
     __IOM  uint32_t COMPONENTID[4];  //0xff0 - 0xffc
 } CORE_PMU_TypeDef;
-#define CORE0_PMU         ((CORE_PMU_TypeDef *)V2P_CA9_MP_CORE0_PMU_APB_BASE)
-#define CORE1_PMU         ((CORE_PMU_TypeDef *)V2P_CA9_MP_CORE1_PMU_APB_BASE)
-#define CORE2_PMU         ((CORE_PMU_TypeDef *)V2P_CA9_MP_CORE2_PMU_APB_BASE)
-#define CORE3_PMU         ((CORE_PMU_TypeDef *)V2P_CA9_MP_CORE3_PMU_APB_BASE)
+#define CORE0_PMU         ((CORE_PMU_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_CORE0_PMU_APB_BASE))
+#define CORE1_PMU         ((CORE_PMU_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_CORE1_PMU_APB_BASE))
+#define CORE2_PMU         ((CORE_PMU_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_CORE2_PMU_APB_BASE))
+#define CORE3_PMU         ((CORE_PMU_TypeDef *)PERIPH_PA_TO_VA(V2P_CA9_MP_CORE3_PMU_APB_BASE))

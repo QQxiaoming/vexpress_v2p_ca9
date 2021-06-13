@@ -74,6 +74,6 @@ pub struct USART0 {
 impl USART0 {
     #[inline(always)]
     pub const fn ptr() -> *const UartRegisterBlock {
-        0x1000_9000 as *const _
+        0xf000_9000 as *const _
     }
 }

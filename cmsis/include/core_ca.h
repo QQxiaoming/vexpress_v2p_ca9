@@ -737,7 +737,7 @@ typedef struct
   __IOM uint32_t DEBUG_CONTROL;              /*!< \brief Offset: 0x0f40 (R/W) Debug Control Register          */
 } L2C_310_TypeDef;
 
-#define L2C_310           ((L2C_310_TypeDef *)L2C_310_BASE) /*!< \brief L2C_310 register set access pointer */
+#define L2C_310           ((L2C_310_TypeDef *) PERIPH_PA_TO_VA(L2C_310_BASE)) /*!< \brief L2C_310 register set access pointer */
 #endif
 
 #if (__GIC_PRESENT == 1U) || defined(DOXYGEN)
@@ -783,7 +783,7 @@ typedef struct
   __IOM uint64_t IROUTER[988];         /*!< \brief  Offset: 0x6100(R/W) Interrupt Routing Registers */
 }  GICDistributor_Type;
 
-#define GICDistributor      ((GICDistributor_Type      *)     GIC_DISTRIBUTOR_BASE ) /*!< \brief GIC Distributor register set access pointer */
+#define GICDistributor      ((GICDistributor_Type      *) PERIPH_PA_TO_VA( GIC_DISTRIBUTOR_BASE) ) /*!< \brief GIC Distributor register set access pointer */
 
 /** \brief  Structure type to access the Generic Interrupt Controller Interface (GICC)
 */
@@ -810,7 +810,7 @@ typedef struct
   __OM  uint32_t DIR;                  /*!< \brief  Offset: 0x1000( /W) Deactivate Interrupt Register */
 }  GICInterface_Type;
 
-#define GICInterface        ((GICInterface_Type        *)     GIC_INTERFACE_BASE )   /*!< \brief GIC Interface register set access pointer */
+#define GICInterface        ((GICInterface_Type        *)  PERIPH_PA_TO_VA( GIC_INTERFACE_BASE ))   /*!< \brief GIC Interface register set access pointer */
 #endif
 
 #if (__TIM_PRESENT == 1U) || defined(DOXYGEN)
@@ -831,7 +831,7 @@ typedef struct
   __IOM uint32_t WRESET;          //!< \brief  Offset: 0x030 (R/W) Watchdog Reset Status Register
   __OM  uint32_t WDISABLE;        //!< \brief  Offset: 0x034 ( /W) Watchdog Disable Register
 } Timer_Type;
-#define PTIM ((Timer_Type *) TIMER_BASE )   /*!< \brief Timer register struct */
+#define PTIM ((Timer_Type *) PERIPH_PA_TO_VA( TIMER_BASE ) )   /*!< \brief Timer register struct */
 #endif
 #endif
 
@@ -2522,11 +2522,12 @@ __STATIC_INLINE void MMU_TTSection(uint32_t *ttb, uint32_t vbase_address, uint32
   \param [in]     pbase_address  4k base address
   \param [in]             count  Number of 4k pages to create
   \param [in]     descriptor_l1  L1 descriptor (region attributes)
-  \param [in]            ttb_l2  L2 table base address
+  \param [in]         ttb_l2_pa  L2 table base address
+  \param [in]         ttb_l2_va  L2 table virtual base address
   \param [in]     descriptor_l2  L2 descriptor (region attributes)
 
 */
-__STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t vbase_address, uint32_t pbase_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2, uint32_t descriptor_l2 )
+__STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t vbase_address, uint32_t pbase_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2_pa, uint32_t *ttb_l2_va, uint32_t descriptor_l2 )
 {
 
   uint32_t offset, offset2;
@@ -2534,7 +2535,7 @@ __STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t vbase_address, uint32_
   uint32_t i;
 
   offset = vbase_address >> 20;
-  entry  = ((int)ttb_l2 & 0xFFFFFC00) | descriptor_l1;
+  entry  = ((int)ttb_l2_pa & 0xFFFFFC00) | descriptor_l1;
 
   //4 bytes aligned
   ttb += offset;
@@ -2542,12 +2543,12 @@ __STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t vbase_address, uint32_
   *ttb = entry;
 
   offset2 = (vbase_address & 0xff000) >> 12;
-  ttb_l2 += offset2;
+  ttb_l2_va += offset2;
   entry2 = (pbase_address & 0xFFFFF000) | descriptor_l2;
   for (i = 0; i < count; i++ )
   {
     //4 bytes aligned
-    *ttb_l2++ = entry2;
+    *ttb_l2_va++ = entry2;
     entry2 += OFFSET_4K;
   }
 }
@@ -2559,11 +2560,12 @@ __STATIC_INLINE void MMU_TTPage4k(uint32_t *ttb, uint32_t vbase_address, uint32_
   \param [in]     pbase_address  64k base address
   \param [in]             count  Number of 64k pages to create
   \param [in]     descriptor_l1  L1 descriptor (region attributes)
-  \param [in]            ttb_l2  L2 table base address
+  \param [in]         ttb_l2_pa  L2 table base address
+  \param [in]         ttb_l2_va  L2 table virtual base address
   \param [in]     descriptor_l2  L2 descriptor (region attributes)
 
 */
-__STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t vbase_address,uint32_t pbase_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2, uint32_t descriptor_l2 )
+__STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t vbase_address,uint32_t pbase_address, uint32_t count, uint32_t descriptor_l1, uint32_t *ttb_l2_pa, uint32_t *ttb_l2_va, uint32_t descriptor_l2 )
 {
   uint32_t offset, offset2;
   uint32_t entry, entry2;
@@ -2571,7 +2573,7 @@ __STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t vbase_address,uint32_
 
 
   offset = vbase_address >> 20;
-  entry  = ((int)ttb_l2 & 0xFFFFFC00) | descriptor_l1;
+  entry  = ((int)ttb_l2_pa & 0xFFFFFC00) | descriptor_l1;
 
   //4 bytes aligned
   ttb += offset;
@@ -2579,7 +2581,7 @@ __STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t vbase_address,uint32_
   *ttb = entry;
 
   offset2 = (vbase_address & 0xff000) >> 12;
-  ttb_l2 += offset2;
+  ttb_l2_va += offset2;
   entry2 = (pbase_address & 0xFFFF0000) | descriptor_l2;
   for (i = 0; i < count; i++ )
   {
@@ -2587,7 +2589,7 @@ __STATIC_INLINE void MMU_TTPage64k(uint32_t *ttb, uint32_t vbase_address,uint32_
     for (j = 0; j < 16; j++)
     {
       //4 bytes aligned
-      *ttb_l2++ = entry2;
+      *ttb_l2_va++ = entry2;
     }
     entry2 += OFFSET_64K;
   }

@@ -176,15 +176,15 @@ $(BUILD_DIR)/$(TARGET).elf: $(OBJECTS) $(LD_FILE) $(TOP_DIR)/rust_core_lib/libru
 	@echo LD $(notdir $@)
 	@$(CC) $(OBJECTS) $(subst $(TOP_DIR), ., $(LDFLAGS)) -o $@
 
-$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
+$(BUILD_DIR)/%.hex: $(BUILD_DIR)/%.elf Makefile | $(BUILD_DIR)
 	@echo HEX $(notdir $@)
 	@$(HEX) $< $@
 
-$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
+$(BUILD_DIR)/%.bin: $(BUILD_DIR)/%.elf Makefile | $(BUILD_DIR)
 	@echo BIN $(notdir $@)
 	@$(BIN) $< $@
 
-$(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf | $(BUILD_DIR)
+$(BUILD_DIR)/%.lst: $(BUILD_DIR)/%.elf Makefile | $(BUILD_DIR)
 	@echo OBJDUMP $(notdir $@)
 	@$(OBJDUMP) --source --demangle --disassemble --reloc --wide $< > $@
 	@$(SZ) --format=berkeley $<
@@ -210,15 +210,15 @@ clean:
 #######################################
 # use gdb debug
 #######################################
-debug:
+debug: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/../gdb.script Makefile
 	@echo start GDB
 	@$(GDB) -x $(BUILD_DIR)/../gdb.script $(BUILD_DIR)/$(TARGET).elf
 
-debug_gui:
+debug_gui: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/../gdb.script Makefile
 	@echo start GDB
 	@$(INSIGHT) -x $(BUILD_DIR)/../gdb.script $(BUILD_DIR)/$(TARGET).elf
 
-qemu:
+qemu: $(BUILD_DIR)/$(TARGET).bin Makefile
 	@echo start qemu
 	@$(QEMU) \
 	-M vexpress-a9 \
@@ -231,7 +231,7 @@ qemu:
 	-device loader,addr=0x60000000,cpu-num=3 \
 	-nographic
 
-qemu_gdb:
+qemu_gdb: $(BUILD_DIR)/$(TARGET).bin Makefile
 	@echo start qemu
 	@$(QEMU) \
 	-M vexpress-a9 \
