@@ -26,10 +26,17 @@ QEMU_DIR    = /cygdrive/c/Program\ Files/qemu
 INSIGHT_DIR = /cygdrive/c/Users/pc/Desktop/v2p_ca9/arm-none-linux-gnueabihf-insight/bin
 RUST_DIR    = /cygdrive/c/Users/pc/.cargo/bin
 else
+ifeq ($(LC_OS_NAME), msys)
+GCC_DIR     = /c/Users/xiaoming/Desktop/v2p_ca9/gcc-arm-10.2-2020.11-mingw-w64-i686-arm-none-linux-gnueabihf/bin
+QEMU_DIR    = /c/Program\ Files/qemu
+INSIGHT_DIR = /c/Users/xiaoming/Desktop/v2p_ca9/arm-none-linux-gnueabihf-insight/bin
+RUST_DIR    = /c/Users/xiaoming/.cargo/bin
+else
 GCC_DIR     = /opt/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin
 QEMU_DIR    = /usr/local/bin
 INSIGHT_DIR = /opt/arm-none-linux-gnueabihf-insight/bin
 RUST_DIR    = ~/.cargo/bin
+endif
 endif
 
 #######################################
