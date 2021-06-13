@@ -39,7 +39,7 @@ void task2(void *p_arg)
         extern void test_rust_uart(void);
         debug_logdebug(LOG_SYS_INFO,"rust test %d\n",rust_add(10,time));
         test_rust_uart();
-        debug_logdebug(LOG_SYS_INFO,"0xC0008000 %x\n",*(volatile uint32_t *)(0xC0008000));
+        debug_logdebug(LOG_SYS_INFO,"0xC0008000 %x\n",*(volatile uint32_t *)(0x60008000));
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
@@ -135,4 +135,10 @@ void vApplicationFPUSafeIRQHandler( uint32_t ulICCIAR )
     {
         InterruptHandler();
     }
+}
+
+void __c_panic(uint32_t a,uint32_t b,uint32_t c)
+{
+    debug_logdebug(LOG_SYS_INFO,"a 0x%x b 0x%x c 0x%x\n",a,b,c);
+    while(1);
 }

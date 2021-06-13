@@ -277,8 +277,14 @@ core3_start:
 	.align 4
 Undefined_Handler:
 Prefetch_Handler:
+        b Prefetch_Handler
+
+        .section .text.handler
+	.align 4
 Abort_Handler:
-        b Abort_Handler
+        mov     r1, lr
+        mrs     r2, spsr
+        b __c_panic
 
         .section .text.handler
 	.align 4
