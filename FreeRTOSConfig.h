@@ -29,6 +29,7 @@
 #define FREERTOS_CONFIG_H
 
 #include <string.h>
+#include "core_ca.h"
 #include "v2p_ca9_system.h"
 
 /*-----------------------------------------------------------
@@ -79,7 +80,7 @@
 #define configUSE_TICK_HOOK						0
 #define configMAX_PRIORITIES					( 7 )
 #define configMINIMAL_STACK_SIZE				( ( unsigned short ) 256 ) /* Large in case configUSE_TASK_FPU_SUPPORT is 2 in which case all tasks have an FPU context. */
-#define configTOTAL_HEAP_SIZE					( 512 * 1024 )
+#define configTOTAL_HEAP_SIZE					( 1024 * 1024 )
 #define configMAX_TASK_NAME_LEN					( 20 )
 #define configUSE_TRACE_FACILITY				1
 #define configUSE_16_BIT_TICKS					0
@@ -93,6 +94,7 @@
 #define configUSE_COUNTING_SEMAPHORES			1
 #define configUSE_QUEUE_SETS					1
 #define configSUPPORT_STATIC_ALLOCATION			0
+#define configUSE_MMU_PAGE_TABLE		    	1
 
 /* Co-routine definitions. */
 #define configUSE_CO_ROUTINES 					1
@@ -165,5 +167,7 @@ void vClearTickInterrupt( void );
 #define configINTERRUPT_CONTROLLER_BASE_ADDRESS 		(PERIPH_PA_TO_VA( GIC_DISTRIBUTOR_BASE ))
 #define configINTERRUPT_CONTROLLER_CPU_INTERFACE_OFFSET ( -0xf00 )
 #define configUNIQUE_INTERRUPT_PRIORITIES				32
+
+#define configAPPLICATION_ALLOCATED_HEAP    1
 
 #endif /* FREERTOS_CONFIG_H */

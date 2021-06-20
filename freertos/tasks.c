@@ -274,6 +274,10 @@ typedef struct tskTaskControlBlock /* The old naming convention is used to preve
 		xMPU_SETTINGS	xMPUSettings;		/*< The MPU settings are defined as part of the port layer.  THIS MUST BE THE SECOND MEMBER OF THE TCB STRUCT. */
 	#endif
 
+	#if( configUSE_MMU_PAGE_TABLE == 1 )
+		UBaseType_t page_table;
+	#endif
+
 	ListItem_t			xStateListItem;	/*< The list that the state list item of a task is reference from denotes the state of that task (Ready, Blocked, Suspended ). */
 	ListItem_t			xEventListItem;		/*< Used to reference a task from an event list. */
 	UBaseType_t			uxPriority;			/*< The priority of the task.  0 is the lowest priority. */
@@ -741,7 +745,7 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB ) PRIVILEGED_FUNCTION;
 
 #endif /* portUSING_MPU_WRAPPERS */
 /*-----------------------------------------------------------*/
-
+#include "debug_log.h"
 #if( configSUPPORT_DYNAMIC_ALLOCATION == 1 )
 
 	BaseType_t xTaskCreate(	TaskFunction_t pxTaskCode,
@@ -810,6 +814,31 @@ static void prvAddNewTaskToReadyList( TCB_t *pxNewTCB ) PRIVILEGED_FUNCTION;
 		}
 		#endif /* portSTACK_GROWTH */
 
+		#if( configUSE_MMU_PAGE_TABLE == 1 )
+		{
+			if(pxNewTCB != NULL)
+			{
+				UBaseType_t *page_tab_addr = NULL;	
+				page_tab_addr = pvPortMalloc( 32*1024 );
+				if(page_tab_addr != NULL)
+				{
+					memset(page_tab_addr,0x0,32*1024);
+					memcpy(page_tab_addr,(void *)DDRMEM_PA_TO_VA((__get_TTBR0()&(~0x3fff))),20*1024);
+					
+					pxNewTCB->page_table = DDRMEM_VA_TO_PA((UBaseType_t)page_tab_addr);
+					pxNewTCB->page_table |= (__get_TTBR0()&(0x3fff));
+				}
+				else
+				{
+					vPortFree( pxNewTCB->pxStack );
+					vPortFree( pxNewTCB );
+					pxNewTCB = NULL;
+				}
+			}
+		}
+
+		#endif
+		
 		if( pxNewTCB != NULL )
 		{
 			#if( tskSTATIC_AND_DYNAMIC_ALLOCATION_POSSIBLE != 0 ) /*lint !e9029 !e731 Macro has been consolidated for readability reasons. */

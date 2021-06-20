@@ -1,12 +1,12 @@
 ROM_SIZE        = 1024*1024*1;
 RAM_SIZE        = 1024*1024*1;
+HEAP_SIZE       = 1024*1024*1;
 C_STACK_SIZE    = 0x2000;
 SVC_STACK_SIZE  = 0x1000;
 IRQ_STACK_SIZE  = 0x1000;
 FIQ_STACK_SIZE  = 0x1000;
 UND_STACK_SIZE  = 0x100;
 ABT_STACK_SIZE  = 0x100;
-HEAP_SIZE       = 0x1000;
 
 VIRTUAL_START_ADDR = 0xC0000000;
 VIRTUAL_END_ADDR   = 0xDFFFFFFF;
@@ -38,11 +38,13 @@ SVC_STACK_CORE3 = IRQ_STACK_CORE3 - IRQ_STACK_SIZE;
 ABT_STACK_CORE3 = SVC_STACK_CORE3 - SVC_STACK_SIZE;
 
 _Min_Stack_Size = 4*(C_STACK_SIZE + IRQ_STACK_SIZE + FIQ_STACK_SIZE + SVC_STACK_SIZE + ABT_STACK_SIZE);
+_Min_HEAP_Size = HEAP_SIZE;
 
 MEMORY
 {
 	ROM(rx)   : ORIGIN = VIRTUAL_START_ADDR,        LENGTH = ROM_SIZE
-	RAM(xrw)  : ORIGIN = ORIGIN(ROM) + LENGTH(ROM) , LENGTH = RAM_SIZE
+	HEAP(xrw) : ORIGIN = ORIGIN(ROM) + LENGTH(ROM) , LENGTH = HEAP_SIZE
+	RAM(xrw)  : ORIGIN = ORIGIN(HEAP) + LENGTH(HEAP) , LENGTH = RAM_SIZE
 }
 
 SECTIONS
@@ -51,7 +53,6 @@ SECTIONS
 	{
 		. = ALIGN(4);
 		KEEP(*(.text.reset));
-		KEEP(*(.init.data));
 		. = ALIGN(4);
 	} > ROM
 
@@ -118,6 +119,14 @@ SECTIONS
 	{
 		PROVIDE(_sidata = .);
 	} > ROM
+
+	._user_heap :
+	{
+		. = ALIGN(4);
+		PROVIDE(heap_start = .);
+		. = . + _Min_HEAP_Size;
+		. = ALIGN(4);
+	} > HEAP
 
 	/* Initialized data sections goes into RAM, load LMA copy after code */
 	.data :

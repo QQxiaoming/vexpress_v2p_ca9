@@ -86,11 +86,21 @@
 	LDR		R1, [R0]
 	STR		SP, [R1]
 
+	LDR		R0, pxCurrentTCBConst
+	LDR		R1, [R0, #4]
+	MRC		15, 0, R0, c2, c0, 0
+	STR		R0, [R1]
+
 	.endm
 
 ; /**********************************************************************/
 
 .macro portRESTORE_CONTEXT
+
+	LDR		R0, pxCurrentTCBConst
+	LDR		R0, [R0]
+	LDR		R1, [R0, #4]
+	MCR		15, 0, R1, c2, c0, 0
 
 	/* Set the SP to point to the stack of the task being restored. */
 	LDR		R0, pxCurrentTCBConst

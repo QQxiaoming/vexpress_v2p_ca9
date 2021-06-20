@@ -810,6 +810,10 @@ extern "C" {
 	#define configUSE_POSIX_ERRNO 0
 #endif
 
+#ifndef configUSE_MMU_PAGE_TABLE
+	#define configUSE_MMU_PAGE_TABLE 0
+#endif
+
 #ifndef portTICK_TYPE_IS_ATOMIC
 	#define portTICK_TYPE_IS_ATOMIC 0
 #endif

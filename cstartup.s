@@ -375,7 +375,7 @@ not_jump_handler:
         pop     {lr}
         subs    pc, lr, #4
 
-        .section .init.data
+        .section .rodata.init_boot_page_table
         .align 16
 boot_page_table:
         # 0x60000000 -> 0x60000000 (1M) this temp only use in boot

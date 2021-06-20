@@ -26,7 +26,7 @@ void MMU_CreateTranslationTable(void)
 {
     mmu_region_attributes_Type region;
 
-    uint32_t *ttbr0 = (uint32_t *)(DDRMEM_PA_TO_VA(__get_TTBR0()));
+    uint32_t *ttbr0 = (uint32_t *)(DDRMEM_PA_TO_VA((__get_TTBR0()&(~0x3fff))));
     /*
      * Generate descriptors. Refer to core_ca.h to get information about attributes
      */

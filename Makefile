@@ -243,8 +243,9 @@ qemu_gdb: $(BUILD_DIR)/$(TARGET).bin Makefile
 	@$(QEMU) \
 	-M vexpress-a9 \
 	-m 1024m \
-	-smp 4 \
+	-smp 1 \
 	-device loader,file=$(BUILD_DIR)/$(TARGET).bin,addr=0x60000000 \
+	-device loader,addr=0x60000000,cpu-num=0 \
 	-nographic \
 	-gdb tcp::1234 -S
 
