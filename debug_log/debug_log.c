@@ -60,15 +60,15 @@ typedef char * myva_list;
 
 char *mystrcpy(char *dest, const char *src);
 char *mystrcat(char *dest, const char *src);
-unsigned int mystrlen(const char *s);
-void *memset(void *s, int c, unsigned int count);
-void myitoa(unsigned int n, char *buf);
-int myatoi(char *pstr);
-void myxtoa(unsigned int n, char *buf);
-int myisDigit(unsigned char c);
-int myisLetter(unsigned char c);
+static unsigned int mystrlen(const char *s);
+static void *mymemset(void *s, int c, unsigned int count);
+static void myitoa(unsigned int n, char *buf);
+static int myatoi(char *pstr);
+static void myxtoa(unsigned int n, char *buf);
+static int myftoa(double num, int n,char *buf);
+static int myisDigit(unsigned char c);
 
-void *mymemcpy(void *dest, const void *src, unsigned int count)
+static void *mymemcpy(void *dest, const void *src, unsigned int count)
 {
     uint8_t * _src = (uint8_t *)src;
     uint8_t * _dst = (uint8_t *)dest;
@@ -80,10 +80,10 @@ void *mymemcpy(void *dest, const void *src, unsigned int count)
 }
 
 /*
-*功能：整型(int) 转化成 字符型(char)
-*注意：不用 % / 符号的话，只能正确打印:0...9的数字对应的字符'0'...'9'
-*/
-void myitoa(unsigned int n, char *buf)
+ * 功能：整型(int) 转化成 字符型(char)
+ * 注意：不用 % / 符号的话，只能正确打印:0...9的数字对应的字符'0'...'9'
+ */
+static void myitoa(unsigned int n, char *buf)
 {
     int i;
 
@@ -104,9 +104,9 @@ void myitoa(unsigned int n, char *buf)
 }
 
 /*
-*功能：字符型(char) 转化成 整型(int)
-*/
-int myatoi(char *pstr)
+ * 功能：字符型(char) 转化成 整型(int)
+ */
+static int myatoi(char *pstr)
 {
     int int_ret = 0;
     int int_sign = 1; //正负号标示 1:正数 -1:负数
@@ -145,11 +145,11 @@ int myatoi(char *pstr)
 }
 
 /*
-*功能：16进制字(0x) 转化成 字符型(char)
-*注意：不用 % / 符号的话，只能正确打印，0...9..15的数字,对应的'0'...'9''A'...'F'
-*注意：由于编译问题，这个函数，暂时由uart_sendByte_hex()函数替代
-*/
-void myxtoa(unsigned int n, char *buf)
+ * 功能：16进制字(0x) 转化成 字符型(char)
+ * 注意：不用 % / 符号的话，只能正确打印，0...9..15的数字,对应的'0'...'9''A'...'F'
+ * 注意：由于编译问题，这个函数，暂时由uart_sendByte_hex()函数替代
+ */
+static void myxtoa(unsigned int n, char *buf)
 {
     int i;
     if (n < 16)
@@ -181,10 +181,69 @@ void myxtoa(unsigned int n, char *buf)
     buf[i + 1] = '\0';
 }
 
+static int myftoa(double num, int n,char *buf)
+{
+    int     sumI;
+    float   sumF;
+    int     sign = 0;
+    int     temp;
+    int     count = 0;
+    char *p;
+    char *pp;
+
+    if(buf == NULL) return -1;
+    p = buf;
+
+    /*Is less than 0*/
+    if(num < 0)
+    {
+        sign = 1;
+        num = 0 - num;
+    }
+    sumI = (int)num;    //sumI is the part of int
+    sumF = num - sumI;  //sumF is the part of float
+
+    /*Int ===> String*/
+    do
+    {
+        temp = sumI % 10;
+        *(buf++) = temp + '0';
+    }while((sumI = sumI /10) != 0);
+
+    if(sign == 1)
+    {
+        *(buf++) = '-';
+    }
+    pp = buf;
+    pp--;
+    while(p < pp)
+    {
+        *p = *p + *pp;
+        *pp = *p - *pp;
+        *p = *p -*pp;
+        p++;
+        pp--;
+    }
+    *(buf++) = '.';     //point
+
+    /*Float ===> String*/
+    do
+    {
+        temp = (int)(sumF*10);
+        *(buf++) = temp + '0';
+        if((++count) == n)
+            break;
+        sumF = sumF*10 - temp;
+    }while(!(sumF > -0.000001 && sumF < 0.000001));
+
+    *buf ='\0';
+    return 0;
+}
+
 /*
  * 判断一个字符是否数字
  */
-int myisDigit(unsigned char c)
+static int myisDigit(unsigned char c)
 {
     if (c >= '0' && c <= '9')
         return 1;
@@ -206,14 +265,14 @@ int myisLetter(unsigned char c)
 }
 
 /**
- * memset - Fill a region of memory with the given value
+ * mymemset - Fill a region of memory with the given value
  * @s: Pointer to the start of the area.
  * @c: The byte to fill the area with
  * @count: The size of the area.
  *
- * Do not use memset() to access IO space, use memset_io() instead.
+ * Do not use mymemset() to access IO space, use memset_io() instead.
  */
-void *memset(void *s, int c, unsigned int count)
+static void *mymemset(void *s, int c, unsigned int count)
 {
     char *xs = (char *)s;
 
@@ -241,7 +300,7 @@ char *mystrcpy(char *dest, const char *src)
  * mystrlen - Find the length of a string
  * @s: The string to be sized
  */
-unsigned int mystrlen(const char *s)
+static unsigned int mystrlen(const char *s)
 {
     const char *sc;
 
@@ -268,12 +327,12 @@ char *mystrcat(char *dest, const char *src)
 }
 
 static char printk_string[UART_LOG_BUFF_SIZE] = {0};
-
-/*功能：格式化打印一个字符串
-*参数：格式化的字符串
-*注意：这个是简易版本 (%02x 完成)
-* %-3s不行， %f也不行， %X不行
-*/
+/*
+ * 功能：格式化打印一个字符串
+ * 参数：格式化的字符串
+ * 注意：这个是简易版本 (%02x 完成)
+ * %-3s不行， %f也不行， %X不行
+ */
 int _printf(char *fmt, ...)
 {
     char *str = printk_string;
@@ -281,6 +340,7 @@ int _printf(char *fmt, ...)
     char c;
     char *s;
     int n;
+    double f;
 
     int index = 0;
     int ret = 2;
@@ -290,9 +350,9 @@ int _printf(char *fmt, ...)
     int num = 0;
     int len = 0;
 
-    memset(printk_string, 0, UART_LOG_BUFF_SIZE);
-    memset(buf, 0, sizeof(buf));
-    memset(digit, 0, sizeof(digit));
+    mymemset(printk_string, 0, UART_LOG_BUFF_SIZE);
+    mymemset(buf, 0, sizeof(buf));
+    mymemset(digit, 0, sizeof(digit));
 
     myva_list ap;
 
@@ -335,6 +395,21 @@ int _printf(char *fmt, ...)
                 str += mystrlen(buf);
                 break;
             }
+            case 'f': /*单精度浮点*/
+            {
+                f = myva_arg(ap, double);
+                int ndigit = 0;
+                float temp = (float)f;
+                while(temp != (long)(temp))
+                {
+                    temp *= 10;
+                    ndigit ++;
+                }
+                myftoa(f, ndigit, buf);
+                mymemcpy(str, buf, mystrlen(buf));
+                str += mystrlen(buf);
+                break;
+            }
             case 's': /*字符串*/
             {
                 s = myva_arg(ap, char *);
@@ -353,7 +428,7 @@ int _printf(char *fmt, ...)
             {
                 index = 0;
                 num = 0;
-                memset(digit, 0, sizeof(digit));
+                mymemset(digit, 0, sizeof(digit));
 
                 while (1)
                 {
@@ -390,7 +465,7 @@ int _printf(char *fmt, ...)
                     }
                     else
                     {
-                        memset(str, '0', num - len);
+                        mymemset(str, '0', num - len);
                         str += num - len;
                         mymemcpy(str, buf, mystrlen(buf));
                         str += mystrlen(buf);
@@ -409,7 +484,7 @@ int _printf(char *fmt, ...)
                     }
                     else
                     {
-                        memset(str, '0', num - len);
+                        mymemset(str, '0', num - len);
                         str += num - len;
                         mymemcpy(str, buf, len);
                         str += len;
@@ -427,7 +502,7 @@ int _printf(char *fmt, ...)
                     }
                     else
                     {
-                        memset(str, '0', num - len);
+                        mymemset(str, '0', num - len);
                         str += num - len;
                         mymemcpy(str, s, mystrlen(s));
                         str += mystrlen(s);
