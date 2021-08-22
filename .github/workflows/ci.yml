@@ -27,10 +27,11 @@ jobs:
           sudo apt update
           sudo apt install -y curl make qemu-system-arm
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup-init.sh
-          chmod +X rustup-init.sh
+          chmod +x rustup-init.sh
           ./rustup-init.sh -y
           rustup -y install stable  
           rustup -y target add armv7-unknown-linux-gnueabihf -y
+          rm ./rustup-init.sh
 
       - name: Download and extract prebuilt toolchain
         run: |
