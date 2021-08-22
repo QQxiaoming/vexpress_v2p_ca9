@@ -46,6 +46,7 @@ void task2(void *p_arg)
 
 static void vTaskCreate (void *p_arg)
 { 
+    debug_loginfo(DEBUG_LOG_INFO,"Welcome debugging vexpress_v2p_ca9_project\n");
     xTaskCreate(task1,"task1",2048,NULL,4,NULL);
     xTaskCreate(task2,"task2",2048,NULL,4,NULL);
 
