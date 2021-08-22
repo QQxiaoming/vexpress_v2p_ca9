@@ -46,7 +46,6 @@ void task2(void *p_arg)
 
 static void vTaskCreate (void *p_arg)
 { 
-    debug_loginfo(DEBUG_LOG_INFO,"Welcome debugging vexpress_v2p_ca9_project\n");
     xTaskCreate(task1,"task1",2048,NULL,4,NULL);
     xTaskCreate(task2,"task2",2048,NULL,4,NULL);
 
@@ -56,6 +55,8 @@ static void vTaskCreate (void *p_arg)
 int main()
 {
     uint32_t mpid = __get_MPIDR()&0xFFF;
+    debug_loginfo(DEBUG_LOG_INFO,"Welcome debugging vexpress_v2p_ca9_project\n");
+
     pl01x_init(PERIPH_PA_TO_VA(V2P_CA9_MP_UART0_BASE),115200);
     debug_logdebug(LOG_SYS_INFO,"this core MPIDR 0x%x\n",mpid);
     for(int i=0;i<1000;i++) delay(100000);
