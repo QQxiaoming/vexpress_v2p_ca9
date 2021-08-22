@@ -29,8 +29,8 @@ jobs:
           curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs > rustup-init.sh
           chmod +x rustup-init.sh
           ./rustup-init.sh -y
-          rustup -y install stable  
-          rustup -y target add armv7-unknown-linux-gnueabihf
+          rustup install stable  
+          rustup target add armv7-unknown-linux-gnueabihf
           rm ./rustup-init.sh
 
       - name: Download and extract prebuilt toolchain
