@@ -32,6 +32,7 @@ jobs:
           rustup install stable  
           rustup target add armv7-unknown-linux-gnueabihf
           rm ./rustup-init.sh
+          ln -s /usr/bin/qemu-system-arm /usr/local/bin/qemu-system-arm
 
       - name: Download and extract prebuilt toolchain
         run: |
