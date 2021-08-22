@@ -30,7 +30,7 @@ jobs:
           chmod +x rustup-init.sh
           ./rustup-init.sh -y
           rustup -y install stable  
-          rustup -y target add armv7-unknown-linux-gnueabihf -y
+          rustup -y target add armv7-unknown-linux-gnueabihf
           rm ./rustup-init.sh
 
       - name: Download and extract prebuilt toolchain
