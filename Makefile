@@ -227,10 +227,13 @@ debug_gui: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/../gdb.script Makefile
 
 qemu: $(BUILD_DIR)/$(TARGET).bin Makefile
 	@echo start qemu
+	@export QEMU_AUDIO_DRV=none
 	@$(QEMU) \
 	-M vexpress-a9 \
 	-m 1024m \
 	-smp 4 \
+	-global virtio-mmio.force-legacy=false \
+	-device virtio-gpu-device \
 	-device loader,file=$(BUILD_DIR)/$(TARGET).bin,addr=0x60000000 \
 	-device loader,addr=0x60000000,cpu-num=0 \
 	-device loader,addr=0x60000000,cpu-num=1 \
@@ -240,10 +243,13 @@ qemu: $(BUILD_DIR)/$(TARGET).bin Makefile
 
 qemu_gdb: $(BUILD_DIR)/$(TARGET).bin Makefile
 	@echo start qemu
+	@export QEMU_AUDIO_DRV=none
 	@$(QEMU) \
 	-M vexpress-a9 \
 	-m 1024m \
 	-smp 1 \
+	-global virtio-mmio.force-legacy=false \
+	-device virtio-mouse-device \
 	-device loader,file=$(BUILD_DIR)/$(TARGET).bin,addr=0x60000000 \
 	-device loader,addr=0x60000000,cpu-num=0 \
 	-nographic \

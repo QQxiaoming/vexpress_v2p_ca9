@@ -61,6 +61,11 @@ void MMU_CreateTranslationTable(void)
                   Page_L1_64k,
                   (uint32_t *)TTB_L2_BASE_64k_NUM1,(uint32_t *)SRAMMEM_PA_TO_VA(TTB_L2_BASE_64k_NUM1),
                   Page_64k_Device_RW);
+    MMU_TTPage64k(ttbr0,
+                  PERIPH_PA_TO_VA(QEMU_VIRIO_MMIO_BASE),QEMU_VIRIO_MMIO_BASE,1,
+                  Page_L1_64k,
+                  (uint32_t *)TTB_L2_BASE_64k_NUM1,(uint32_t *)SRAMMEM_PA_TO_VA(TTB_L2_BASE_64k_NUM1),
+                  Page_64k_Device_RW);
 
     MMU_TTPage4k(ttbr0,
                  PERIPH_PA_TO_VA(__get_CBAR()),__get_CBAR(),256,
