@@ -107,8 +107,8 @@ const char * const pcWelcomeMessage =
  \\ \\_/ /  /   _/  | (      | |      | (   ) |      ) |\r\n\
   \\   /  (   (__/\\| )      | (____/\\| )   ( |/\\____) )\r\n\
    \\_/   \\_______/|/       (_______/|/     \\|\\______/ \r\n\
-2019 by 2014500726@smail.xtu.edu.cn\r\n\
-Welcome debugging vexpress_v2p_ca9_project!";
+2022 by 2014500726@smail.xtu.edu.cn\r\n\
+Welcome debugging vexpress_v2p_ca9 project!";
 const char * const pcEndOfOutputMessage = "\r\n\033[32mV2PCA9@FreeRTOS>\033[0m";
 const char * const pcNewLine = "\r\n";
 

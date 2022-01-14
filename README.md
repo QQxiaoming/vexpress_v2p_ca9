@@ -63,3 +63,26 @@
 |                      |                          |
 +----------------------+ 0x00000000  <------------+
 ```
+
+ - 2022.01.14 最近打算继续更新这个项目，先移植个简单的CLI程序
+
+ ```
+          _______  _______  _______  _______   _____  
+|\     /|/ ___   )(  ____ )(  ____ \(  ___  ) / ___ \ 
+| )   ( |\/   )  || (    )|| (    \/| (   ) |( (   ) )
+| |   | |    /   )| (____)|| |      | (___) |( (___) |
+( (   ) )  _/   / |  _____)| |      |  ___  | \____  |
+ \ \_/ /  /   _/  | (      | |      | (   ) |      ) |
+  \   /  (   (__/\| )      | (____/\| )   ( |/\____) )
+   \_/   \_______/|/       (_______/|/     \|\______/ 
+2022 by 2014500726@smail.xtu.edu.cn
+Welcome debugging vexpress_v2p_ca9 project!
+V2PCA9@FreeRTOS>help
+help:			Lists all the registered commands
+version:		showing version
+uname:			Echos uname in turn
+echo:			Echos each in turn
+ps:			showing the state of each FreeRTOS task
+free:			showing the mem of each FreeRTOS heap
+V2PCA9@FreeRTOS>
+ ```
