@@ -22,6 +22,18 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Cache toolchain
+        uses: actions/cache@v2
+        env:
+          cache-name: cache-toolchain
+        with:
+          path: |
+            /opt/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf
+          key: ${{ runner.os }}-build-${{ env.cache-name }}
+          restore-keys: |
+            ${{ runner.os }}-build-
+            ${{ runner.os }}-
+
       - name: Install prerequisites
         run: |
           sudo apt update
@@ -36,11 +48,13 @@ jobs:
 
       - name: Download and extract prebuilt toolchain
         run: |
+          if [ ! -d "/opt/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf" ]; then
           wget https://armkeil.blob.core.windows.net/developer/Files/downloads/gnu-a/9.2-2019.12/binrel/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf.tar.xz
           tar -xvf gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf.tar.xz
           mv gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf /opt/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf
           rm -f *.tar.xz
           /opt/gcc-arm-9.2-2019.12-x86_64-arm-none-linux-gnueabihf/bin/arm-none-linux-gnueabihf-gcc --version
+          fi
 
       - name: Build all
         run: |
@@ -56,6 +70,6 @@ jobs:
       - name: Run tests
         run: |
           export QEMU_AUDIO_DRV=none
-          timeout --foreground -s SIGKILL 2m make qemu > >(tee run_qemu.log) || {
+          timeout --foreground -s SIGKILL 3m make qemu > >(tee run_qemu.log) || {
             if cat run_qemu.log | grep "Welcome debugging vexpress_v2p_ca9_project!" ; then echo "Pass simulation" && exit 0; else echo "Failed in init process" && exit 1; fi;
           }
