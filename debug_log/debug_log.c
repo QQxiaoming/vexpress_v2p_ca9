@@ -7,6 +7,13 @@
 
 #if CONFIG_DEBUG_LOG_EN
 
+char _getchar(void)
+{
+    char ch;
+    pl01x_getc(PERIPH_PA_TO_VA(V2P_CA9_MP_UART0_BASE),&ch,0xFFFFFFFF);
+    return ch;
+}
+
 void _putchar(char ch)
 {
     if ('\n' == ch)

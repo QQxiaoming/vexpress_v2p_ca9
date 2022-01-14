@@ -9,6 +9,7 @@
 #include "semphr.h"
 #include <math.h>
 #include <string.h>
+#include "UARTCommandConsole.h"
 
 unsigned int smp_start_flag = 0;
 
@@ -17,6 +18,16 @@ static inline void delay(uint32_t loops)
 	__asm__ volatile ("1:\n"
 		"subs %0, %1, #1\n"
 		"bne 1b" : "=r" (loops) : "0" (loops));
+}
+
+void test_c_call_rust(void)
+{
+    static int time = 0;
+    extern uint32_t rust_add(uint32_t,uint32_t);
+    extern void test_rust_uart(void);
+    debug_logdebug(LOG_SYS_INFO,"rust test %d\n",rust_add(10,time++));
+    test_rust_uart();
+    debug_logdebug(LOG_SYS_INFO,"0xC0008000 %x\n",*(volatile uint32_t *)(0xC0008000));
 }
 
 void task1(void *p_arg)
@@ -35,19 +46,20 @@ void task2(void *p_arg)
     for(;;)
     {
         debug_logdebug(LOG_SYS_INFO,"task2 0x%x\n",time++);
-        extern uint32_t rust_add(uint32_t,uint32_t);
-        extern void test_rust_uart(void);
-        debug_logdebug(LOG_SYS_INFO,"rust test %d\n",rust_add(10,time));
-        test_rust_uart();
-        debug_logdebug(LOG_SYS_INFO,"0xC0008000 %x\n",*(volatile uint32_t *)(0xC0008000));
+        //test_c_call_rust();
         vTaskDelay(pdMS_TO_TICKS(1000));
     }
 }
 
 static void vTaskCreate (void *p_arg)
 { 
-    xTaskCreate(task1,"task1",2048,NULL,4,NULL);
-    xTaskCreate(task2,"task2",2048,NULL,4,NULL);
+    vUARTCommandConsoleInit();
+    extern void vRegisterCLICommands(void);
+    vRegisterCLICommands();
+    vUARTCommandConsoleStart(512,3);
+
+    //xTaskCreate(task1,"task1",2048,NULL,4,NULL);
+    //xTaskCreate(task2,"task2",2048,NULL,4,NULL);
 
     vTaskDelete(NULL);
 }
@@ -55,8 +67,6 @@ static void vTaskCreate (void *p_arg)
 int main()
 {
     uint32_t mpid = __get_MPIDR()&0xFFF;
-    debug_loginfo(DEBUG_LOG_INFO,"Welcome debugging vexpress_v2p_ca9_project\n");
-
     pl01x_init(PERIPH_PA_TO_VA(V2P_CA9_MP_UART0_BASE),115200);
     debug_logdebug(LOG_SYS_INFO,"this core MPIDR 0x%x\n",mpid);
     for(int i=0;i<1000;i++) delay(100000);

@@ -1562,13 +1562,13 @@ TaskHandle_t xTaskGetIdleTaskHandle( void ) PRIVILEGED_FUNCTION;
 
 					if( ulStatsAsPercentage > 0UL )
 					{
-						sprintf( pcWriteBuffer, "%s\t\t%lu\t\t%lu%%\r\n", pxTaskStatusArray[ x ].pcTaskName, pxTaskStatusArray[ x ].ulRunTimeCounter, ulStatsAsPercentage );
+						iCliSprintf( pcWriteBuffer, "%s\t\t%lu\t\t%lu%%\r\n", pxTaskStatusArray[ x ].pcTaskName, pxTaskStatusArray[ x ].ulRunTimeCounter, ulStatsAsPercentage );
 					}
 					else
 					{
 						// If the percentage is zero here then the task has
 						// consumed less than 1% of the total run time.
-						sprintf( pcWriteBuffer, "%s\t\t%lu\t\t<1%%\r\n", pxTaskStatusArray[ x ].pcTaskName, pxTaskStatusArray[ x ].ulRunTimeCounter );
+						iCliSprintf( pcWriteBuffer, "%s\t\t%lu\t\t<1%%\r\n", pxTaskStatusArray[ x ].pcTaskName, pxTaskStatusArray[ x ].ulRunTimeCounter );
 					}
 
 					pcWriteBuffer += strlen( ( char * ) pcWriteBuffer );
@@ -1609,10 +1609,10 @@ UBaseType_t uxTaskGetSystemState( TaskStatus_t * const pxTaskStatusArray, const 
  * uxTaskGetSystemState() output into a human readable table that displays task
  * names, states and stack usage.
  *
- * vTaskList() has a dependency on the sprintf() C library function that might
+ * vTaskList() has a dependency on the iCliSprintf() C library function that might
  * bloat the code size, use a lot of stack, and provide different results on
  * different platforms.  An alternative, tiny, third party, and limited
- * functionality implementation of sprintf() is provided in many of the
+ * functionality implementation of iCliSprintf() is provided in many of the
  * FreeRTOS/Demo sub-directories in a file called printf-stdarg.c (note
  * printf-stdarg.c does not provide a full snprintf() implementation!).
  *
@@ -1663,10 +1663,10 @@ void vTaskList( char * pcWriteBuffer ) PRIVILEGED_FUNCTION; /*lint !e971 Unquali
  * amount of time each task has spent in the Running state in both absolute and
  * percentage terms.
  *
- * vTaskGetRunTimeStats() has a dependency on the sprintf() C library function
+ * vTaskGetRunTimeStats() has a dependency on the iCliSprintf() C library function
  * that might bloat the code size, use a lot of stack, and provide different
  * results on different platforms.  An alternative, tiny, third party, and
- * limited functionality implementation of sprintf() is provided in many of the
+ * limited functionality implementation of iCliSprintf() is provided in many of the
  * FreeRTOS/Demo sub-directories in a file called printf-stdarg.c (note
  * printf-stdarg.c does not provide a full snprintf() implementation!).
  *

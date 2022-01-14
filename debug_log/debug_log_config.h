@@ -17,6 +17,6 @@
 
 /* 打印等级 */
 #define LOG_ASSERT                  DEBUG_LOG_ERROR
-#define LOG_SYS_INFO                DEBUG_LOG_DEBUG
+#define LOG_SYS_INFO                DEBUG_LOG_INFO
 
 #endif

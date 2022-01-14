@@ -170,4 +170,11 @@ void vClearTickInterrupt( void );
 
 #define configAPPLICATION_ALLOCATED_HEAP    1
 
+/* FreeRTOS CLI */
+#define configCOMMAND_INT_MAX_OUTPUT_SIZE       1024
+#define configMAX_HISTORY_NUM                   5
+#define configMAX_COMPLETION_NUM                8
+#define configUSE_ERR_KEY_SEND_RING             1
+#define configUSE_SUPPOST_XTERM                 0
+
 #endif /* FREERTOS_CONFIG_H */

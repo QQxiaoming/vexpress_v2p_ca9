@@ -66,6 +66,24 @@ typedef struct
 #define UART_PL011_IMSC_CTSMIM          (1 << 1)
 #define UART_PL011_IMSC_RIMIM           (1 << 0)
 
+int pl01x_getc(uint32_t uart_addr, char *c, uint32_t timeout)
+{
+    pl01x_regs *uart = (pl01x_regs *)uart_addr;
+	
+	while ((uart->fr & UART_PL01x_FR_RXFE) != 0){
+		if(timeout != 0xFFFFFFFF) {
+			if(timeout == 0) {
+				return -1;
+			}
+			timeout--;
+		}
+	}
+	if(c) {
+		*c = uart->dr;
+	}
+	return 0;
+}
+
 int pl01x_putc(uint32_t uart_addr, char c)
 {
     pl01x_regs *uart = (pl01x_regs *)uart_addr;

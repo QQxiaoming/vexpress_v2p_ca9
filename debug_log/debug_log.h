@@ -16,6 +16,9 @@
 
 
 extern int _printf(char* format,...);
+extern void _putchar(char ch);
+char _getchar(void);
+extern int _puts(char *str);
 extern void uart_log_int_handler(void);
 extern void uart_log_int_mode_init(void);
 

@@ -57,5 +57,5 @@ jobs:
         run: |
           export QEMU_AUDIO_DRV=none
           timeout --foreground -s SIGKILL 2m make qemu > >(tee run_qemu.log) || {
-            if cat run_qemu.log | grep "Welcome debugging vexpress_v2p_ca9_project" ; then echo "Pass simulation" && exit 0; else echo "Failed in init process" && exit 1; fi;
+            if cat run_qemu.log | grep "Welcome debugging vexpress_v2p_ca9_project!" ; then echo "Pass simulation" && exit 0; else echo "Failed in init process" && exit 1; fi;
           }

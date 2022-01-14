@@ -78,6 +78,8 @@ C_SOURCES =  \
         ${wildcard $(TOP_DIR)/freertos/*.c} \
         ${wildcard $(TOP_DIR)/freertos/portable/GCC/ARM_CA9/*.c} \
         ${wildcard $(TOP_DIR)/freertos/portable/MemMang/heap_4.c} \
+        ${wildcard $(TOP_DIR)/cli/*.c} \
+        ${wildcard $(TOP_DIR)/cli/port/*.c} \
         ${wildcard $(TOP_DIR)/*.c}
 
 # ASM sources
@@ -114,6 +116,8 @@ C_INCLUDES = \
         -I $(TOP_DIR)/cmsis/include \
         -I $(TOP_DIR)/freertos/include \
         -I $(TOP_DIR)/freertos/portable/GCC/ARM_CA9 \
+        -I $(TOP_DIR)/cli \
+        -I $(TOP_DIR)/cli/port \
         -I $(TOP_DIR)
 
 
@@ -227,8 +231,7 @@ debug_gui: $(BUILD_DIR)/$(TARGET).elf $(BUILD_DIR)/../gdb.script Makefile
 
 qemu: $(BUILD_DIR)/$(TARGET).bin Makefile
 	@echo start qemu
-	@export QEMU_AUDIO_DRV=none
-	@$(QEMU) \
+	@QEMU_AUDIO_DRV=none $(QEMU) \
 	-M vexpress-a9 \
 	-m 1024m \
 	-smp 4 \
@@ -243,8 +246,7 @@ qemu: $(BUILD_DIR)/$(TARGET).bin Makefile
 
 qemu_gdb: $(BUILD_DIR)/$(TARGET).bin Makefile
 	@echo start qemu
-	@export QEMU_AUDIO_DRV=none
-	@$(QEMU) \
+	@QEMU_AUDIO_DRV=none $(QEMU) \
 	-M vexpress-a9 \
 	-m 1024m \
 	-smp 1 \
