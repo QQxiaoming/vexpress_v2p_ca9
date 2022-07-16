@@ -1,5 +1,6 @@
 [![CI](https://github.com/QQxiaoming/vexpress_v2p_ca9/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/QQxiaoming/vexpress_v2p_ca9/actions/workflows/ci.yml)
 [![CodeFactor](https://www.codefactor.io/repository/github/qqxiaoming/vexpress_v2p_ca9/badge)](https://www.codefactor.io/repository/github/qqxiaoming/vexpress_v2p_ca9)
+[![License](https://img.shields.io/github/license/qqxiaoming/vexpress_v2p_ca9.svg?colorB=f48041&style=flat-square)](https://github.com/QQxiaoming/vexpress_v2p_ca9)
 
 # vexpress_v2p_ca9
 

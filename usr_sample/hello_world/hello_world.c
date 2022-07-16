@@ -1,7 +1,5 @@
-#include <stdio.h>
 
-int main()
+void _start(void)
 {
-    printf("hello world\n");
-    return 0;
+    while(1);
 }
