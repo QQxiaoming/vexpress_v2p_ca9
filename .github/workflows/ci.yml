@@ -61,7 +61,7 @@ jobs:
           make
 
       - name: Upload build asserts
-        uses: actions/upload-artifact@v3.1.1
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: v2p_ca9.elf
           path: |
